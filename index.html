@@ -1,0 +1,961 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MV.ai — Crie Sites, E-books e Anúncios com Inteligência Artificial</title>
+  <meta name="description" content="MV.ai é a plataforma completa e 100% gratuita para criar landing pages, sites, e-books e criativos em segundos com Inteligência Artificial.">
+  <link rel="icon" type="image/svg+xml" href="assets/logo.svg">
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Poppins:wght@400;600;700;800;900&family=Montserrat:wght@700;800;900&family=Space+Grotesk:wght@600;700&family=Playfair+Display:wght@700;800&family=Oswald:wght@600;700&display=swap" rel="stylesheet">
+
+  <!-- Font Awesome Icons -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+
+  <!-- PDF & Canvas generation libraries -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+  <!-- Three.js for 3D Cyber Particles -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+  <!-- JSZip for 1-click project export -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+
+  <!-- Custom Styles -->
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body class="text-white flex overflow-hidden">
+  <!-- 3D Animated Background -->
+  <div id="animated-bg"></div>
+
+  <!-- Centered Processing Overlay -->
+  <div id="generating-overlay" class="fixed inset-0 bg-black/75 backdrop-blur-xl z-[500] flex flex-col justify-center items-center hidden opacity-0 transition-all duration-300">
+    <div class="glass-panel p-10 rounded-3xl border border-blue-500/50 shadow-[0_0_60px_rgba(59,130,246,0.35)] flex flex-col items-center transform transition-transform duration-300 scale-95" id="generating-overlay-card">
+      <div class="flex items-center space-x-4 mb-8">
+        <div class="w-5 h-5 bg-blue-500 rounded-full animate-bounce" style="animation-delay: 0s;"></div>
+        <div class="w-5 h-5 bg-purple-500 rounded-full animate-bounce" style="animation-delay: 0.15s;"></div>
+        <div class="w-5 h-5 bg-cyan-400 rounded-full animate-bounce" style="animation-delay: 0.3s;"></div>
+      </div>
+      <h2 id="generating-overlay-text" class="text-3xl font-black bg-gradient-to-r from-blue-400 via-purple-400 to-cyan-300 bg-clip-text text-transparent animate-pulse tracking-tight text-center">
+        MV.ai está processando...
+      </h2>
+      <p class="text-gray-400 mt-4 text-base italic font-medium">Nossa Inteligência Artificial está gerando seu conteúdo de alta conversão...</p>
+    </div>
+  </div>
+
+  <!-- Desktop Sidebar -->
+  <aside id="sidebar" class="fixed top-0 left-0 h-full max-h-screen w-64 glass-panel p-4 z-40 hidden sm:flex flex-col overflow-y-auto custom-scrollbar">
+    <!-- App Logo -->
+    <div class="flex items-center justify-center mb-6 pt-2">
+      <img src="assets/logo.svg" alt="MV.ai Logo" class="h-16 w-auto object-contain drop-shadow-[0_0_15px_rgba(59,130,246,0.5)]">
+    </div>
+
+    <!-- User VIP Info & Unlimited Status -->
+    <div class="mb-6 p-3 rounded-xl bg-gray-900/60 border border-gray-800 text-center">
+      <span id="user-display-name-sidebar" class="font-bold text-blue-300 text-base block mb-1">Membro VIP MV.ai</span>
+      <div id="credit-info-container-sidebar">
+        <span id="credits-balance-display-sidebar" class="badge-vip">
+          <i class="fas fa-infinity mr-1"></i> Créditos Ilimitados
+        </span>
+      </div>
+      <div class="mt-2 text-[10px] text-emerald-400 font-semibold tracking-wider uppercase">
+        <i class="fas fa-check-circle mr-1"></i> Acesso 100% Gratuito
+      </div>
+    </div>
+
+    <!-- Navigation Buttons -->
+    <nav class="flex-1 space-y-2.5">
+      <button id="dev-mode-button-sidebar" class="flex items-center w-full px-4 py-3 rounded-xl text-white font-semibold transition duration-200 bg-blue-600 hover:bg-blue-700 shadow-md">
+        <i class="fas fa-globe mr-3 text-lg text-cyan-300"></i> Gerador de Sites
+      </button>
+
+      <button id="infoproduct-mode-button-sidebar" class="flex items-center w-full px-4 py-3 rounded-xl text-white font-semibold transition duration-200 bg-gray-700 hover:bg-blue-600 shadow-md">
+        <i class="fas fa-book mr-3 text-lg text-purple-400"></i> Gerador de E-book
+      </button>
+
+      <button id="zayron-cloner-mode-button-sidebar" class="flex items-center w-full px-4 py-3 rounded-xl text-white font-semibold transition duration-200 bg-gray-700 hover:bg-blue-600 shadow-md">
+        <i class="fas fa-clone mr-3 text-lg text-amber-400"></i> Clonador de Sites
+      </button>
+
+      <button id="chat-mode-button-sidebar" class="flex items-center w-full px-4 py-3 rounded-xl text-white font-semibold transition duration-200 bg-gray-700 hover:bg-blue-600 shadow-md">
+        <i class="fas fa-comments mr-3 text-lg text-blue-400"></i> Gerador de Prompts
+      </button>
+
+      <button id="ad-creative-mode-button-sidebar" class="flex items-center w-full px-4 py-3 rounded-xl text-white font-semibold transition duration-200 bg-gray-700 hover:bg-blue-600 shadow-md">
+        <i class="fas fa-ad mr-3 text-lg text-pink-400"></i> Gerador de Criativos
+      </button>
+
+      <button id="viral-trends-mode-button-sidebar" class="flex items-center w-full px-4 py-3 rounded-xl text-white font-semibold transition duration-200 bg-gray-700 hover:bg-blue-600 shadow-md">
+        <i class="fas fa-fire mr-3 text-lg text-orange-400"></i> Produtos Virais
+      </button>
+
+      <button id="academy-mode-button-sidebar" class="flex items-center w-full px-4 py-3 rounded-xl text-white font-semibold transition duration-200 bg-emerald-600 hover:bg-emerald-700 shadow-md">
+        <i class="fas fa-graduation-cap mr-3 text-lg text-yellow-300"></i> MV Academy
+      </button>
+    </nav>
+
+    <!-- Sidebar Footer -->
+    <div class="mt-6 pt-4 border-t border-gray-800 space-y-2">
+      <button id="manage-api-button-sidebar" class="flex items-center w-full px-4 py-2.5 rounded-xl text-white font-semibold transition duration-200 bg-purple-700/80 hover:bg-purple-600 shadow-md text-xs">
+        <i class="fas fa-key mr-2 text-sm text-yellow-400"></i> Gerenciar API &amp; Chaves
+      </button>
+      <div class="text-[10px] text-gray-400 text-center font-medium pt-2">
+        MV.ai Pro v2.0 • Sem mensalidades
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Content Wrapper -->
+  <div id="main-content-wrapper" class="relative flex flex-col h-screen flex-1 sm:ml-64">
+    <!-- Mobile Header -->
+    <header class="bg-gray-900/90 text-white p-4 shadow-lg flex justify-between items-center sm:hidden header-animated-border z-30">
+      <div class="flex items-center gap-2">
+        <img src="assets/logo.svg" alt="MV.ai" class="h-10 w-auto">
+      </div>
+      <button id="mobile-menu-button" class="p-2 rounded-lg hover:bg-gray-800 text-xl text-blue-400">
+        <i class="fas fa-bars"></i>
+      </button>
+    </header>
+
+    <!-- Mobile Quick Tab Bar -->
+    <div id="mobile-tab-bar" class="sm:hidden flex overflow-x-auto gap-2 px-3 py-2 bg-gray-900/80 border-b border-gray-800 custom-scrollbar z-20">
+      <button class="mobile-tab-btn mobile-tab-active" onclick="switchView('developer-view', 'dev-mode-button-sidebar')">
+        <i class="fas fa-globe"></i> Sites
+      </button>
+      <button class="mobile-tab-btn" onclick="switchView('infoproduct-view', 'infoproduct-mode-button-sidebar')">
+        <i class="fas fa-book"></i> E-book
+      </button>
+      <button class="mobile-tab-btn" onclick="switchView('zayron-cloner-view', 'zayron-cloner-mode-button-sidebar')">
+        <i class="fas fa-clone"></i> Clonador
+      </button>
+      <button class="mobile-tab-btn" onclick="switchView('chat-view', 'chat-mode-button-sidebar')">
+        <i class="fas fa-comments"></i> Prompts
+      </button>
+      <button class="mobile-tab-btn" onclick="switchView('ad-creative-view', 'ad-creative-mode-button-sidebar')">
+        <i class="fas fa-ad"></i> Criativos
+      </button>
+      <button class="mobile-tab-btn" onclick="switchView('viral-trends-view', 'viral-trends-mode-button-sidebar')">
+        <i class="fas fa-fire"></i> Viral
+      </button>
+      <button class="mobile-tab-btn" onclick="switchView('academy-view', 'academy-mode-button-sidebar')">
+        <i class="fas fa-graduation-cap"></i> Academy
+      </button>
+    </div>
+
+    <!-- Main Views Container -->
+    <main id="main-content" class="flex-1 overflow-y-auto custom-scrollbar pb-[90px] sm:pb-[80px]">
+
+      <!-- ==========================================
+           1. GERADOR DE SITES (DEVELOPER VIEW)
+           ========================================== -->
+      <div id="developer-view" class="h-full flex flex-col p-4">
+        <div class="flex-1 flex flex-col bg-gray-900/80 rounded-2xl border border-gray-800 p-4 shadow-xl">
+          <!-- Controls Bar -->
+          <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-3 flex-wrap">
+            <div class="flex items-center gap-3">
+              <h2 class="text-xl font-bold text-blue-400 flex items-center gap-2">
+                <i class="fas fa-globe"></i> Pré-visualização do Site
+              </h2>
+              <div id="device-preview-controls" class="flex items-center gap-1 bg-gray-800/80 p-1 rounded-xl border border-gray-700">
+                <button id="preview-desktop-button" class="device-preview-button active p-2 rounded-lg" title="Desktop">
+                  <i class="fas fa-desktop"></i>
+                </button>
+                <button id="preview-tablet-button" class="device-preview-button p-2 rounded-lg" title="Tablet">
+                  <i class="fas fa-tablet-alt"></i>
+                </button>
+                <button id="preview-mobile-button" class="device-preview-button p-2 rounded-lg" title="Celular">
+                  <i class="fas fa-mobile-alt"></i>
+                </button>
+              </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex flex-wrap items-center gap-2 justify-start sm:justify-end w-full sm:w-auto">
+              <input type="text" id="project-name-input" placeholder="Nome do Projeto" class="p-2 bg-gray-800 border border-gray-700 rounded-lg text-white text-xs w-full sm:w-44 focus:outline-none focus:border-blue-500">
+              <button id="save-project-button" class="px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-lg transition flex items-center gap-1 shadow">
+                <i class="fas fa-save"></i> Salvar
+              </button>
+              <button id="my-projects-dev-button" class="px-3 py-2 bg-gray-800 hover:bg-gray-700 text-white text-xs font-semibold rounded-lg transition border border-gray-700 flex items-center gap-1.5">
+                <i class="fas fa-folder-open text-amber-400"></i> Meus Sites
+              </button>
+              <button id="copy-html-button" class="px-3 py-2 bg-gray-800 hover:bg-gray-700 text-white text-xs font-semibold rounded-lg transition border border-gray-700 flex items-center gap-1.5">
+                <i class="fas fa-copy text-blue-400"></i> Copiar HTML
+              </button>
+              <button id="publish-netlify-button" class="px-3 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-lg transition shadow flex items-center gap-1.5">
+                <i class="fas fa-cloud-download-alt"></i> Baixar ZIP
+              </button>
+              <button id="embed-scripts-button" class="px-3 py-2 bg-gray-800 hover:bg-gray-700 text-white text-xs font-semibold rounded-lg transition border border-gray-700 flex items-center gap-1.5">
+                <i class="fas fa-code text-purple-400"></i> Scripts/Pixels
+              </button>
+              <button id="preview-undo-button" class="p-2 bg-gray-800 hover:bg-gray-700 text-white text-xs rounded-lg border border-gray-700 disabled:opacity-40" title="Desfazer">
+                <i class="fas fa-undo"></i>
+              </button>
+              <button id="preview-redo-button" class="p-2 bg-gray-800 hover:bg-gray-700 text-white text-xs rounded-lg border border-gray-700 disabled:opacity-40" title="Refazer">
+                <i class="fas fa-redo"></i>
+              </button>
+              <button id="toggle-edit-mode-button" class="px-3 py-2 bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold rounded-lg transition shadow flex items-center gap-1.5">
+                <i class="fas fa-pencil-alt"></i> Editar Site
+              </button>
+              <button id="new-page-button" class="px-3 py-2 bg-gray-800 hover:bg-gray-700 text-white text-xs font-semibold rounded-lg transition border border-gray-700">
+                Nova Página
+              </button>
+            </div>
+          </div>
+
+          <!-- Code View (Hidden by default, used internally) -->
+          <textarea id="code-content-textarea" class="hidden"></textarea>
+
+          <!-- Iframe Preview Area -->
+          <div id="preview-container" class="flex-1 w-full border border-gray-800 rounded-xl bg-gray-950 relative flex justify-center overflow-hidden min-h-[500px]">
+            <iframe id="preview-iframe" class="w-full h-full border-none transition-all duration-300" title="Pré-visualização do Site"></iframe>
+
+            <!-- Text Toolbar in Edit Mode -->
+            <div id="dev-text-edit-toolbar" class="text-edit-toolbar hidden">
+              <button data-format="bold" class="toolbar-btn" title="Negrito"><i class="fas fa-bold"></i></button>
+              <button data-format="italic" class="toolbar-btn" title="Itálico"><i class="fas fa-italic"></i></button>
+              <button data-format="underline" class="toolbar-btn" title="Sublinhado"><i class="fas fa-underline"></i></button>
+              <button data-align="left" class="toolbar-btn" title="Esquerda"><i class="fas fa-align-left"></i></button>
+              <button data-align="center" class="toolbar-btn" title="Centro"><i class="fas fa-align-center"></i></button>
+              <button data-align="right" class="toolbar-btn" title="Direita"><i class="fas fa-align-right"></i></button>
+              <input type="number" id="dev-font-size-input" class="w-14 p-1 bg-gray-800 text-white border border-gray-600 rounded text-xs text-center" min="10" max="80" value="16" title="Tamanho (px)">
+              <select id="dev-font-family-select" class="p-1 bg-gray-800 text-white border border-gray-600 rounded text-xs">
+                <option value="Inter, sans-serif">Inter</option>
+                <option value="Poppins, sans-serif">Poppins</option>
+                <option value="Montserrat, sans-serif">Montserrat</option>
+                <option value="Playfair Display, serif">Playfair Display</option>
+                <option value="Oswald, sans-serif">Oswald</option>
+                <option value="Space Grotesk, sans-serif">Space Grotesk</option>
+              </select>
+              <input type="color" id="dev-text-color-picker" class="color-picker" title="Cor do Texto" value="#ffffff">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==========================================
+           2. GERADOR DE E-BOOK (INFOPRODUCT VIEW)
+           ========================================== -->
+      <div id="infoproduct-view" class="h-full flex flex-col p-4 hidden">
+        <div class="flex-1 flex flex-col lg:flex-row gap-4 h-full">
+          <!-- Left Configuration Panel -->
+          <div class="w-full lg:w-[420px] flex-shrink-0 flex flex-col glass-panel p-5 rounded-2xl border border-gray-800 overflow-y-auto custom-scrollbar">
+            <h2 class="text-2xl font-bold text-blue-400 mb-4 flex items-center gap-2">
+              <i class="fas fa-book"></i> Gerador de E-book
+            </h2>
+
+            <!-- Main Tabs: Texto vs Ilustrativo -->
+            <div class="flex mb-4 bg-gray-800/80 rounded-xl p-1 gap-1 border border-gray-700">
+              <button id="ebook-tab-text" onclick="switchEbookMainTab('text')" class="flex-1 py-2.5 rounded-lg text-xs font-bold transition bg-blue-600 text-white flex items-center justify-center gap-2">
+                <i class="fas fa-book-open"></i> E-book Texto
+              </button>
+              <button id="ebook-tab-illustrative" onclick="switchEbookMainTab('illustrative')" class="flex-1 py-2.5 rounded-lg text-xs font-bold transition text-gray-400 hover:text-white flex items-center justify-center gap-2">
+                <i class="fas fa-images"></i> E-book Ilustrativo
+              </button>
+            </div>
+
+            <!-- Tab: E-book Texto -->
+            <div id="ebook-text-tab-content" class="space-y-4">
+              <div id="ebook-initial-panel" class="space-y-4">
+                <div>
+                  <label for="ebook-description-input" class="block text-xs font-bold text-gray-300 mb-1">Descreva o tema do seu e-book</label>
+                  <textarea id="ebook-description-input" rows="6" class="w-full p-3 bg-gray-800/80 text-white border border-gray-700 rounded-xl focus:outline-none focus:border-blue-500 text-xs custom-scrollbar resize-none" placeholder="Ex: O Guia Definitivo de Inteligência Artificial para Negócios, com estratégias práticas para faturar mais."></textarea>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                  <div>
+                    <label for="ebook-format-select" class="block text-xs font-bold text-gray-300 mb-1">Formato</label>
+                    <select id="ebook-format-select" class="w-full p-2.5 bg-gray-800 border border-gray-700 rounded-xl text-white text-xs">
+                      <option value="a4">A4 Retrato</option>
+                      <option value="landscape">Paisagem</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label for="ebook-chapter-count-input" class="block text-xs font-bold text-gray-300 mb-1">Capítulos (1-30)</label>
+                    <input type="number" id="ebook-chapter-count-input" min="1" max="30" value="6" class="w-full p-2.5 bg-gray-800 border border-gray-700 rounded-xl text-white text-xs">
+                  </div>
+                </div>
+
+                <button id="generate-ebook-button" class="w-full py-3.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-extrabold rounded-xl shadow-lg transition flex items-center justify-center gap-2">
+                  <i class="fas fa-magic"></i> Gerar E-book com MV.ai
+                </button>
+              </div>
+
+              <!-- Modify Panel -->
+              <div id="ebook-modify-panel" class="space-y-3 hidden">
+                <label for="ebook-modification-input" class="block text-xs font-bold text-purple-300">Modificar e-book atual</label>
+                <textarea id="ebook-modification-input" rows="4" class="w-full p-2.5 bg-gray-800 text-white border border-gray-700 rounded-xl text-xs" placeholder="Ex: Adicione um capítulo sobre automações de vendas..."></textarea>
+                <button id="modify-ebook-button" class="w-full py-2.5 bg-purple-600 hover:bg-purple-700 text-white font-bold rounded-xl text-xs transition">
+                  <i class="fas fa-edit mr-1"></i> Aplicar Modificação com IA
+                </button>
+              </div>
+            </div>
+
+            <!-- Tab: E-book Ilustrativo -->
+            <div id="ebook-illustrative-tab-content" class="space-y-4 hidden">
+              <div>
+                <label for="illustrative-description-input" class="block text-xs font-bold text-gray-300 mb-1">Tema do e-book ilustrado</label>
+                <textarea id="illustrative-description-input" rows="5" class="w-full p-3 bg-gray-800 text-white border border-gray-700 rounded-xl text-xs resize-none" placeholder="Ex: Como investir em ações para iniciantes, com exemplos práticos e infográficos visuais."></textarea>
+              </div>
+
+              <div>
+                <label for="illustrative-style-select" class="block text-xs font-bold text-gray-300 mb-1">Estilo Visual da Arte</label>
+                <select id="illustrative-style-select" class="w-full p-2.5 bg-gray-800 border border-gray-700 rounded-xl text-white text-xs">
+                  <option value="modern flat design infographic, vibrant colors, clean layout">Infográfico Moderno</option>
+                  <option value="premium 3D render illustration, glossy, depth of field">3D Premium</option>
+                  <option value="beautiful watercolor illustration, soft colors, artistic">Aquarela Artística</option>
+                  <option value="comic book illustration, bold outlines, expressive characters">Quadrinhos / HQ</option>
+                  <option value="minimalist vector illustration, white background, geometric">Minimalista Vector</option>
+                  <option value="photorealistic digital art, cinematic lighting">Fotorrealista</option>
+                  <option value="vintage retro poster illustration, warm tones">Retrô / Vintage</option>
+                </select>
+              </div>
+
+              <button id="generate-illustrative-ebook-button" class="w-full py-3.5 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white font-extrabold rounded-xl shadow-lg transition flex items-center justify-center gap-2">
+                <i class="fas fa-palette"></i> Gerar E-book Ilustrativo
+              </button>
+
+              <button id="illustrative-stop-button" class="w-full py-2.5 bg-red-600 hover:bg-red-700 text-white font-bold rounded-xl text-xs transition hidden">
+                <i class="fas fa-stop mr-1"></i> Parar Geração
+              </button>
+
+              <div id="illustrative-progress-area" class="hidden space-y-1.5 pt-2">
+                <div class="flex justify-between text-xs text-gray-400">
+                  <span id="illustrative-progress-label">Gerando...</span>
+                  <span id="illustrative-progress-count"></span>
+                </div>
+                <div class="w-full bg-gray-800 rounded-full h-2 border border-gray-700">
+                  <div id="illustrative-progress-bar" class="bg-purple-500 h-2 rounded-full transition-all duration-300" style="width: 0%"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Ebook Action Buttons -->
+            <div class="pt-4 border-t border-gray-800 space-y-2">
+              <button id="download-pdf-button" class="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold rounded-xl shadow-lg transition flex items-center justify-center gap-2 hidden">
+                <i class="fas fa-file-pdf text-lg"></i> Baixar E-book em PDF
+              </button>
+              <button id="save-ebook-button" class="w-full py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl text-xs transition flex items-center justify-center gap-1.5 hidden">
+                <i class="fas fa-save"></i> Salvar em Meus E-books
+              </button>
+            </div>
+
+            <!-- Visual Themes Selector -->
+            <div id="ebook-theme-selector" class="mt-4 pt-4 border-t border-gray-800 space-y-3 hidden">
+              <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider flex items-center gap-1.5">
+                <i class="fas fa-palette text-blue-400"></i> Estilo do E-book
+              </h3>
+              <div class="grid grid-cols-2 gap-2">
+                <button onclick="switchEbookTheme('classic')" class="p-2 rounded-lg bg-gray-800 hover:bg-gray-700 text-xs font-semibold text-gray-200 border border-gray-700 flex items-center gap-2">
+                  <span class="w-3 h-3 rounded-full bg-black border border-gray-400"></span> Clássico
+                </button>
+                <button onclick="switchEbookTheme('modern')" class="p-2 rounded-lg bg-gray-800 hover:bg-gray-700 text-xs font-semibold text-gray-200 border border-gray-700 flex items-center gap-2">
+                  <span class="w-3 h-3 rounded-full bg-blue-500"></span> Moderno
+                </button>
+                <button onclick="switchEbookTheme('royal')" class="p-2 rounded-lg bg-gray-800 hover:bg-gray-700 text-xs font-semibold text-gray-200 border border-gray-700 flex items-center gap-2">
+                  <span class="w-3 h-3 rounded-full bg-purple-600"></span> Royal
+                </button>
+                <button onclick="switchEbookTheme('nature')" class="p-2 rounded-lg bg-gray-800 hover:bg-gray-700 text-xs font-semibold text-gray-200 border border-gray-700 flex items-center gap-2">
+                  <span class="w-3 h-3 rounded-full bg-emerald-500"></span> Nature
+                </button>
+                <button onclick="switchEbookTheme('minimal')" class="p-2 rounded-lg bg-gray-800 hover:bg-gray-700 text-xs font-semibold text-gray-200 border border-gray-700 flex items-center gap-2">
+                  <span class="w-3 h-3 rounded-full bg-white"></span> Minimalista
+                </button>
+                <button onclick="switchEbookTheme('ocean')" class="p-2 rounded-lg bg-gray-800 hover:bg-gray-700 text-xs font-semibold text-gray-200 border border-gray-700 flex items-center gap-2">
+                  <span class="w-3 h-3 rounded-full bg-cyan-400"></span> Ocean
+                </button>
+              </div>
+
+              <!-- Color Customization -->
+              <div class="pt-2 border-t border-gray-800 flex gap-2">
+                <div class="flex-1">
+                  <label class="block text-[10px] text-gray-400 mb-1">Cor Primária</label>
+                  <input type="color" id="custom-primary-color" value="#3b82f6" class="w-full h-8 rounded-lg bg-transparent cursor-pointer">
+                </div>
+                <div class="flex-1">
+                  <label class="block text-[10px] text-gray-400 mb-1">Cor Secundária</label>
+                  <input type="color" id="custom-secondary-color" value="#ec4899" class="w-full h-8 rounded-lg bg-transparent cursor-pointer">
+                </div>
+              </div>
+
+              <!-- Frame Style -->
+              <div>
+                <label for="custom-frame-style" class="block text-[10px] text-gray-400 mb-1">Estilo de Moldura</label>
+                <select id="custom-frame-style" class="w-full p-2 bg-gray-800 text-white rounded-lg text-xs border border-gray-700">
+                  <option value="waves">Ondas Orgânicas</option>
+                  <option value="diagonal">Corte Diagonal</option>
+                  <option value="none">Limpo (Sem moldura)</option>
+                </select>
+              </div>
+
+              <!-- Font Scaling -->
+              <div class="pt-2 flex items-center justify-between">
+                <span class="text-xs text-gray-400">Escala de Texto:</span>
+                <div class="flex items-center gap-2">
+                  <button id="global-font-scale-dec" class="px-2 py-1 bg-gray-800 hover:bg-gray-700 rounded text-xs font-bold">A-</button>
+                  <span id="global-font-scale-display" class="text-xs font-mono text-blue-400 font-bold">100%</span>
+                  <button id="global-font-scale-inc" class="px-2 py-1 bg-gray-800 hover:bg-gray-700 rounded text-xs font-bold">A+</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Block Toolbox (Add elements to page) -->
+            <div id="block-toolbox" class="mt-4 pt-4 border-t border-gray-800 space-y-2">
+              <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Adicionar Bloco à Página</h3>
+              <div class="grid grid-cols-2 gap-2">
+                <button class="draggable-block-item p-2 rounded-lg bg-gray-800 border border-gray-700 text-xs flex items-center gap-1.5" data-type="h1">
+                  <i class="fas fa-heading text-blue-400"></i> Título H1
+                </button>
+                <button class="draggable-block-item p-2 rounded-lg bg-gray-800 border border-gray-700 text-xs flex items-center gap-1.5" data-type="h2">
+                  <i class="fas fa-h-square text-amber-400"></i> Subtítulo H2
+                </button>
+                <button class="draggable-block-item p-2 rounded-lg bg-gray-800 border border-gray-700 text-xs flex items-center gap-1.5" data-type="p">
+                  <i class="fas fa-paragraph text-emerald-400"></i> Parágrafo
+                </button>
+                <button class="draggable-block-item p-2 rounded-lg bg-gray-800 border border-gray-700 text-xs flex items-center gap-1.5" data-type="image">
+                  <i class="fas fa-image text-purple-400"></i> Imagem
+                </button>
+                <button class="draggable-block-item p-2 rounded-lg bg-gray-800 border border-gray-700 text-xs flex items-center gap-1.5" data-type="product">
+                  <i class="fas fa-shopping-bag text-cyan-400"></i> Produto
+                </button>
+                <button class="draggable-block-item p-2 rounded-lg bg-gray-800 border border-gray-700 text-xs flex items-center gap-1.5" data-type="button">
+                  <i class="fas fa-mouse-pointer text-pink-400"></i> Botão
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right Preview Area -->
+          <div class="flex-1 flex flex-col glass-panel p-4 rounded-2xl border border-gray-800 relative">
+            <div class="flex justify-between items-center mb-4">
+              <h2 class="text-xl font-bold text-blue-400">Visualização do E-book</h2>
+              <div class="flex items-center gap-2">
+                <button id="my-ebooks-button" class="px-3 py-1.5 bg-gray-800 hover:bg-gray-700 text-white rounded-lg text-xs font-semibold border border-gray-700 flex items-center gap-1.5">
+                  <i class="fas fa-folder-open text-amber-400"></i> Meus E-books
+                </button>
+              </div>
+            </div>
+
+            <!-- Ebook Canvas Container -->
+            <div id="ebook-preview-container" class="flex-1 w-full border border-gray-800 rounded-xl bg-gray-950/80 overflow-y-auto custom-scrollbar p-6">
+              <div id="ebook-render-area"></div>
+
+              <div id="ebook-placeholder" class="text-center text-gray-400 flex flex-col justify-center items-center h-full min-h-[400px]">
+                <i class="fas fa-book-reader text-6xl text-gray-700 mb-4 animate-pulse"></i>
+                <h3 class="text-xl font-bold text-gray-300">A pré-visualização do seu e-book aparecerá aqui.</h3>
+                <p class="text-sm text-gray-500 mt-1 max-w-md">Descreva o tema ao lado e clique em "Gerar E-book com MV.ai" para criar páginas diagramadas em formato A4 prontas para venda.</p>
+              </div>
+
+              <button id="add-blank-page-btn" class="w-full max-w-sm mx-auto mt-6 px-6 py-3 bg-gray-800 hover:bg-gray-700 text-white font-bold text-sm rounded-xl border border-gray-700 transition flex items-center justify-center gap-2 hidden">
+                <i class="fas fa-plus"></i> Adicionar Nova Página em Branco
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==========================================
+           3. CLONADOR DE SITES (CLONER VIEW)
+           ========================================== -->
+      <div id="zayron-cloner-view" class="h-full flex flex-col p-4 hidden">
+        <div class="flex-1 flex flex-col lg:flex-row gap-4 h-full">
+          <!-- Left Input Panel -->
+          <div class="w-full lg:w-[400px] flex-shrink-0 flex flex-col glass-panel p-5 rounded-2xl border border-gray-800">
+            <h2 class="text-2xl font-bold text-blue-400 mb-2 flex items-center gap-2">
+              <i class="fas fa-clone"></i> Clonar Site
+            </h2>
+            <p class="text-xs text-gray-400 mb-4">Insira a URL de qualquer site ou cole o HTML diretamente para importá-lo no editor visual.</p>
+
+            <!-- Tabs: URL vs HTML -->
+            <div class="flex space-x-2 mb-4 bg-gray-800/80 p-1 rounded-xl border border-gray-700">
+              <button id="cloner-tab-url" class="flex-1 py-2 bg-blue-600 text-white text-xs font-bold rounded-lg shadow">Via URL</button>
+              <button id="cloner-tab-html" class="flex-1 py-2 text-gray-400 hover:text-white text-xs font-bold rounded-lg">Colar HTML</button>
+            </div>
+
+            <div class="space-y-4">
+              <div id="cloner-url-container">
+                <label for="cloner-url-input" class="block text-xs font-bold text-gray-300 mb-1">URL do Site</label>
+                <input type="url" id="cloner-url-input" class="w-full p-3 bg-gray-800 text-white border border-gray-700 rounded-xl text-xs focus:outline-none focus:border-blue-500" placeholder="https://exemplo.com.br">
+              </div>
+
+              <div id="cloner-html-container" class="hidden">
+                <label for="cloner-html-input" class="block text-xs font-bold text-gray-300 mb-1">Código HTML Bruto</label>
+                <textarea id="cloner-html-input" rows="8" class="w-full p-3 bg-gray-800 text-white border border-gray-700 rounded-xl text-xs font-mono resize-none focus:outline-none focus:border-blue-500" placeholder="Cole o código-fonte HTML aqui..."></textarea>
+              </div>
+
+              <div>
+                <label for="cloner-project-name-input" class="block text-xs font-bold text-gray-300 mb-1">Nome do Projeto</label>
+                <input type="text" id="cloner-project-name-input" placeholder="Meu Site Clonado" class="w-full p-2.5 bg-gray-800 text-white border border-gray-700 rounded-xl text-xs">
+              </div>
+
+              <button id="clone-site-button" class="w-full py-3.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-extrabold rounded-xl shadow-lg transition flex items-center justify-center gap-2">
+                <i class="fas fa-copy"></i> Clonar Agora
+              </button>
+
+              <div class="p-3 bg-gray-800/40 rounded-xl border border-gray-800 text-[11px] text-gray-400 leading-relaxed">
+                <strong class="text-amber-400">Nota:</strong> Se algum site possuir bloqueios avançados de proxy, use a opção <strong>"Colar HTML"</strong> para importar o código diretamente.
+              </div>
+            </div>
+          </div>
+
+          <!-- Right Preview Panel -->
+          <div class="flex-1 flex flex-col glass-panel p-4 rounded-2xl border border-gray-800">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-3 flex-wrap">
+              <div class="flex items-center gap-3">
+                <h2 class="text-xl font-bold text-blue-400">Pré-visualização do Clonador</h2>
+                <div class="flex items-center gap-1 bg-gray-800/80 p-1 rounded-xl border border-gray-700">
+                  <button id="cloner-preview-desktop-button" class="device-preview-button active p-2 rounded-lg"><i class="fas fa-desktop"></i></button>
+                  <button id="cloner-preview-tablet-button" class="device-preview-button p-2 rounded-lg"><i class="fas fa-tablet-alt"></i></button>
+                  <button id="cloner-preview-mobile-button" class="device-preview-button p-2 rounded-lg"><i class="fas fa-mobile-alt"></i></button>
+                </div>
+              </div>
+
+              <div class="flex flex-wrap items-center gap-2">
+                <button id="cloner-save-project-button" class="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-bold">Salvar</button>
+                <button id="cloner-copy-html-button" class="px-3 py-1.5 bg-gray-800 hover:bg-gray-700 text-white rounded-lg text-xs font-semibold border border-gray-700">Copiar HTML</button>
+                <button id="cloner-toggle-edit-mode-button" class="px-3 py-1.5 bg-purple-600 hover:bg-purple-700 text-white rounded-lg text-xs font-bold">
+                  <i class="fas fa-magic mr-1"></i> Abrir no Gerador de Sites
+                </button>
+              </div>
+            </div>
+
+            <div class="flex-1 w-full border border-gray-800 rounded-xl bg-gray-950 relative flex justify-center overflow-hidden min-h-[500px]">
+              <iframe id="cloner-preview-iframe" class="w-full h-full border-none" title="Pré-visualização"></iframe>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==========================================
+           4. GERADOR DE PROMPTS (CHAT VIEW)
+           ========================================== -->
+      <div id="chat-view" class="h-full flex flex-col p-4 hidden">
+        <div class="flex-1 flex flex-col glass-panel rounded-2xl border border-gray-800 p-4 shadow-xl overflow-hidden">
+          <div class="flex items-center justify-between pb-3 mb-2 border-b border-gray-800">
+            <h2 class="text-xl font-bold text-blue-400 flex items-center gap-2">
+              <i class="fas fa-comments"></i> Assistente e Gerador de Prompts MV.ai
+            </h2>
+            <span class="text-xs text-emerald-400 font-semibold flex items-center gap-1.5">
+              <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> Online e Ilimitado
+            </span>
+          </div>
+
+          <div id="chat-history-container" class="flex-1 overflow-y-auto custom-scrollbar p-3 space-y-4"></div>
+
+          <!-- Typing indicator -->
+          <div id="chat-typing-status" class="px-4 py-2 text-xs text-blue-400 italic hidden flex items-center gap-2">
+            <i class="fas fa-robot animate-pulse"></i> MV.ai está escrevendo...
+          </div>
+        </div>
+      </div>
+
+      <!-- ==========================================
+           5. GERADOR DE CRIATIVOS (AD CREATIVE VIEW)
+           ========================================== -->
+      <div id="ad-creative-view" class="h-full flex flex-col p-4 hidden">
+        <div class="max-w-4xl mx-auto w-full space-y-5 pb-8">
+          <div class="text-center pt-2">
+            <h2 class="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-pink-400 via-purple-400 to-blue-400">
+              <i class="fas fa-ad mr-2"></i> Gerador de Criativos de Anúncios
+            </h2>
+            <p class="text-gray-400 text-sm mt-1">Crie artes de alta conversão, briefings e variações A/B para Meta Ads, TikTok e YouTube</p>
+          </div>
+
+          <!-- Format Selection -->
+          <div class="glass-panel p-4 rounded-2xl border border-gray-800">
+            <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Formato do Anúncio</h3>
+            <div id="creative-format-tabs" class="flex flex-wrap gap-2"></div>
+            <p id="creative-format-desc" class="text-xs text-gray-500 mt-2"></p>
+          </div>
+
+          <!-- Description Input -->
+          <div class="glass-panel p-5 rounded-2xl border border-gray-800 space-y-4">
+            <div class="flex items-center justify-between">
+              <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider">Descreva seu Produto ou Oferta</h3>
+              <div class="flex items-center gap-2">
+                <button id="creative-ref-image-btn" type="button" class="text-xs font-semibold px-3 py-1.5 bg-gray-800 hover:bg-purple-900/60 text-purple-300 rounded-lg border border-purple-500/30 flex items-center gap-1.5 transition">
+                  <i class="fas fa-image"></i> Imagem de referência
+                </button>
+                <input type="file" id="creative-ref-image-input" accept="image/*" class="hidden">
+              </div>
+            </div>
+
+            <!-- Preview da imagem de referência -->
+            <div id="creative-ref-image-preview" class="hidden flex items-center gap-3 bg-gray-800/80 p-2 rounded-xl border border-gray-700 w-fit">
+              <img id="creative-ref-image-thumb" src="" alt="Ref" class="w-12 h-12 rounded-lg object-cover">
+              <button id="creative-ref-image-remove" class="text-red-400 hover:text-red-300 text-xs font-bold">Remover</button>
+            </div>
+
+            <textarea id="creative-input" rows="4" class="w-full p-3 bg-gray-800 text-white border border-gray-700 rounded-xl text-xs focus:outline-none focus:border-blue-500 resize-none" placeholder="Ex: Curso de marketing digital para advogados que desejam atrair clientes no automático sem ferir as regras da OAB."></textarea>
+
+            <div class="grid grid-cols-2 gap-3 pt-2">
+              <button id="creative-btn-livre" class="py-3.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold rounded-xl shadow-lg transition flex items-center justify-center gap-2 text-sm">
+                <i class="fas fa-star text-amber-300"></i> Mostrar Solução
+              </button>
+              <button id="creative-btn-agitar" class="py-3.5 bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-500 hover:to-red-500 text-white font-bold rounded-xl shadow-lg transition flex items-center justify-center gap-2 text-sm">
+                <i class="fas fa-fire text-yellow-300"></i> Agitar Problema
+              </button>
+            </div>
+          </div>
+
+          <!-- Result Area -->
+          <div id="creative-result-area" class="hidden space-y-5">
+            <!-- Strategic Brief -->
+            <div class="glass-panel p-5 rounded-2xl border border-blue-500/30">
+              <h3 class="text-sm font-bold text-blue-400 mb-3 flex items-center gap-2">
+                <i class="fas fa-brain"></i> Estratégia e Copywriting do Anúncio
+              </h3>
+              <div id="creative-brief-content" class="text-xs text-gray-300 leading-relaxed space-y-2"></div>
+            </div>
+
+            <!-- Ad Image Visual -->
+            <div class="glass-panel p-5 rounded-2xl border border-purple-500/30 text-center">
+              <h3 class="text-sm font-bold text-purple-400 mb-4 flex items-center justify-center gap-2">
+                <i class="fas fa-image"></i> Arte Visual Gerada por IA
+              </h3>
+
+              <div id="creative-loading-state" class="py-12 flex flex-col items-center gap-3 hidden">
+                <div class="w-12 h-12 border-4 border-purple-500 border-t-transparent rounded-full animate-spin"></div>
+                <p class="text-xs text-gray-400">Renderizando arte em alta resolução...</p>
+              </div>
+
+              <div class="flex justify-center">
+                <img id="creative-result-image" src="" alt="Criativo" class="max-w-md w-full rounded-2xl shadow-2xl border border-gray-700 hidden">
+              </div>
+
+              <div id="creative-image-actions" class="mt-4 flex flex-wrap gap-3 justify-center hidden">
+                <button id="creative-download-btn" class="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl shadow-lg transition flex items-center gap-2 text-xs">
+                  <i class="fas fa-download"></i> Baixar Criativo em Alta Resolução
+                </button>
+                <button id="creative-variation-btn" class="px-5 py-2.5 bg-purple-600 hover:bg-purple-700 text-white font-bold rounded-xl shadow-lg transition flex items-center gap-2 text-xs">
+                  <i class="fas fa-random"></i> Gerar Variação A/B
+                </button>
+              </div>
+            </div>
+
+            <!-- Refinement Chat -->
+            <div class="glass-panel p-5 rounded-2xl border border-gray-800 space-y-3">
+              <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider flex items-center gap-2">
+                <i class="fas fa-sliders-h"></i> Refinar Criativo
+              </h3>
+              <div id="creative-chat-history" class="space-y-2"></div>
+              <div class="flex gap-2">
+                <input type="text" id="creative-refine-input" class="flex-1 p-2.5 bg-gray-800 text-white border border-gray-700 rounded-xl text-xs focus:outline-none focus:border-blue-500" placeholder="Ex: Deixar o fundo mais escuro, com tons dourados...">
+                <button id="creative-refine-btn" class="px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl text-xs transition">
+                  Refinar
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==========================================
+           6. PRODUTOS VIRAIS (VIRAL TRENDS VIEW)
+           ========================================== -->
+      <div id="viral-trends-view" class="h-full flex flex-col p-4 hidden">
+        <div class="max-w-5xl mx-auto w-full space-y-4 h-full flex flex-col">
+          <div class="glass-panel p-6 rounded-2xl border border-gray-800 text-center space-y-3">
+            <h2 class="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-amber-300">
+              <i class="fas fa-fire mr-2"></i> Buscador de Produtos Virais de Alta Conversão
+            </h2>
+            <p class="text-gray-400 text-sm max-w-2xl mx-auto">
+              Descreva o mercado, público ou nicho que você deseja atacar. A inteligência do MV.ai analisa as maiores dores, buscas reais e entrega ideias de infoprodutos prontas para criar.
+            </p>
+            <div class="flex gap-2 max-w-2xl mx-auto pt-2">
+              <textarea id="viral-trends-description-input" rows="2" class="flex-1 p-3 bg-gray-800 text-white border border-gray-700 rounded-xl text-xs focus:outline-none focus:border-blue-500 resize-none" placeholder="Ex: Mães de primeira viagem com bebês recém-nascidos que não conseguem dormir..."></textarea>
+              <button id="generate-viral-trends-button" class="px-6 py-3 bg-gradient-to-r from-orange-600 to-amber-600 hover:from-orange-500 hover:to-amber-500 text-white font-extrabold rounded-xl shadow-lg transition flex items-center justify-center gap-2 text-sm shrink-0">
+                <i class="fas fa-search-dollar"></i> Analisar Mercado
+              </button>
+            </div>
+          </div>
+
+          <div id="viral-products-results" class="flex-1 glass-panel p-6 rounded-2xl border border-gray-800 overflow-y-auto custom-scrollbar">
+            <div class="text-center text-gray-500 py-16">
+              <i class="fas fa-chart-line text-5xl mb-3 text-gray-700"></i>
+              <p class="text-base text-gray-400 font-semibold">As análises de mercado e ideias de produtos virais aparecerão aqui.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==========================================
+           7. MV ACADEMY VIEW
+           ========================================== -->
+      <div id="academy-view" class="h-full flex flex-col p-4 hidden">
+        <div class="max-w-5xl mx-auto w-full space-y-6 pb-8">
+          <div class="text-center pt-2">
+            <h2 class="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-teal-300 to-cyan-400">
+              <i class="fas fa-graduation-cap mr-2"></i> MV Academy — Central de Aprendizado
+            </h2>
+            <p class="text-gray-400 text-sm mt-1">Tutoriais práticos para monetizar com sites, e-books e anúncios usando MV.ai</p>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="glass-panel p-5 rounded-2xl border border-emerald-500/30 space-y-3">
+              <div class="w-10 h-10 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-xl font-bold">1</div>
+              <h3 class="text-lg font-bold text-white">Como Vender E-books em 24h</h3>
+              <p class="text-xs text-gray-400 leading-relaxed">Aprenda a escolher um tema de alta demanda na aba Produtos Virais, gerar seu e-book completo com capa 3D e cadastrar na Kiwify ou Hotmart para vender no automático.</p>
+            </div>
+
+            <div class="glass-panel p-5 rounded-2xl border border-blue-500/30 space-y-3">
+              <div class="w-10 h-10 rounded-xl bg-blue-500/20 text-blue-400 flex items-center justify-center text-xl font-bold">2</div>
+              <h3 class="text-lg font-bold text-white">Criando Landing Pages Lucrativas</h3>
+              <p class="text-xs text-gray-400 leading-relaxed">Como utilizar o Gerador de Sites do MV.ai para produzir páginas de vendas com design moderno, contador de escassez e publicar gratuitamente na Netlify.</p>
+            </div>
+
+            <div class="glass-panel p-5 rounded-2xl border border-purple-500/30 space-y-3">
+              <div class="w-10 h-10 rounded-xl bg-purple-500/20 text-purple-400 flex items-center justify-center text-xl font-bold">3</div>
+              <h3 class="text-lg font-bold text-white">Anúncios de Alta Conversão</h3>
+              <p class="text-xs text-gray-400 leading-relaxed">Descubra como criar criativos nos formatos Feed e Stories que capturam a atenção nos primeiros 3 segundos e geram cliques baratos no Instagram Ads.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </main>
+
+    <!-- Global Footer Prompt Bar (Active on Developer & Chat views) -->
+    <footer class="fixed bottom-0 left-0 right-0 sm:left-64 p-3 bg-gray-900/90 border-t border-gray-800 backdrop-blur-md z-30">
+      <div class="max-w-5xl mx-auto flex items-center gap-2">
+        <textarea id="prompt-input" rows="1" class="flex-1 p-3 bg-gray-800/90 border border-gray-700 rounded-xl focus:outline-none focus:border-blue-500 text-white text-xs custom-scrollbar resize-none" placeholder="Descreva o site ou alterações que deseja gerar com MV.ai..."></textarea>
+        <button id="microphone-button" class="p-3 bg-gray-800 hover:bg-gray-700 text-blue-400 rounded-xl border border-gray-700 transition" title="Falar">
+          <i class="fas fa-microphone"></i>
+        </button>
+        <div id="listening-indicator" class="flex items-center space-x-1 p-2 hidden">
+          <div class="mic-dot bg-blue-400"></div>
+          <div class="mic-dot bg-blue-400" style="animation-delay: 0.2s;"></div>
+        </div>
+        <button id="send-button" class="p-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white rounded-xl shadow-lg transition flex items-center justify-center" title="Enviar">
+          <i class="fas fa-paper-plane"></i>
+        </button>
+      </div>
+    </footer>
+  </div>
+
+  <!-- ==========================================
+       MODALS & DIALOGS
+       ========================================== -->
+
+  <!-- Element Edit Modal (Sites) -->
+  <div id="element-edit-modal" class="fixed inset-0 bg-black/80 z-50 flex justify-center items-center hidden backdrop-blur-sm">
+    <div class="glass-panel p-6 rounded-2xl border border-blue-500/50 w-11/12 max-w-md space-y-4">
+      <h3 class="text-xl font-bold text-blue-400">Editar Elemento</h3>
+
+      <!-- Image Options -->
+      <div id="image-edit-options" class="space-y-3">
+        <div class="p-3 rounded-xl bg-blue-950/40 border border-blue-600/30 space-y-2">
+          <label class="block text-xs font-bold text-blue-300">Gerar Nova Imagem com IA</label>
+          <div class="flex gap-2">
+            <input type="text" id="ai-image-prompt-input" class="flex-1 p-2 bg-gray-800 border border-gray-700 rounded-lg text-xs" placeholder="Ex: foto realista de um smartphone moderno...">
+            <button id="ai-image-generate-btn" class="px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-bold">Gerar</button>
+          </div>
+        </div>
+
+        <div>
+          <label for="element-url-input" class="block text-xs font-medium text-gray-400 mb-1">Ou cole a URL direta da imagem:</label>
+          <input type="url" id="element-url-input" class="w-full p-2 bg-gray-800 border border-gray-700 rounded-lg text-xs" placeholder="https://exemplo.com/imagem.jpg">
+        </div>
+
+        <input type="file" id="element-image-upload" class="hidden" accept="image/*">
+        <button id="upload-element-button" class="w-full py-2 bg-gray-800 hover:bg-gray-700 text-white rounded-lg text-xs font-semibold border border-gray-700">
+          <i class="fas fa-upload mr-1"></i> Carregar do Computador
+        </button>
+      </div>
+
+      <!-- Button Options -->
+      <div id="button-edit-options" class="space-y-3 hidden">
+        <div>
+          <label for="button-text-input" class="block text-xs text-gray-400 mb-1">Texto do Botão</label>
+          <input type="text" id="button-text-input" class="w-full p-2 bg-gray-800 border border-gray-700 rounded-lg text-xs">
+        </div>
+        <div>
+          <label for="button-link-input" class="block text-xs text-gray-400 mb-1">Link de Destino (URL)</label>
+          <input type="url" id="button-link-input" class="w-full p-2 bg-gray-800 border border-gray-700 rounded-lg text-xs" placeholder="https://pay.kiwify.com.br/...">
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label for="button-color-input" class="block text-[10px] text-gray-400 mb-1">Cor do Fundo</label>
+            <input type="color" id="button-color-input" class="w-full h-8 bg-transparent cursor-pointer">
+          </div>
+          <div>
+            <label for="button-text-color-input" class="block text-[10px] text-gray-400 mb-1">Cor do Texto</label>
+            <input type="color" id="button-text-color-input" value="#ffffff" class="w-full h-8 bg-transparent cursor-pointer">
+          </div>
+        </div>
+      </div>
+
+      <div class="flex justify-between pt-3 border-t border-gray-800">
+        <button id="delete-element-button-modal" class="px-3 py-1.5 bg-red-600/80 hover:bg-red-600 text-white rounded-lg text-xs font-bold">Excluir Elemento</button>
+        <div class="flex gap-2">
+          <button id="cancel-element-edit-button" class="px-3 py-1.5 bg-gray-800 hover:bg-gray-700 text-white rounded-lg text-xs">Cancelar</button>
+          <button id="apply-element-url-button" class="px-4 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-bold">Aplicar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Cover Editor Modal (E-books) -->
+  <div id="cover-editor-modal" style="display:none;" class="fixed inset-0 bg-black/80 z-[600] flex justify-center items-center backdrop-blur-md">
+    <div class="glass-panel p-6 rounded-2xl border border-purple-500/50 w-11/12 max-w-md space-y-4">
+      <h3 class="text-xl font-bold text-purple-400 flex items-center gap-2">
+        <i class="fas fa-pencil-alt"></i> Editar Capa do E-book
+      </h3>
+
+      <div class="space-y-3">
+        <div>
+          <label class="block text-xs font-bold text-gray-300 mb-1">Colar Link da Imagem</label>
+          <input type="text" id="cover-editor-url-input" class="w-full p-2 bg-gray-800 border border-gray-700 rounded-lg text-xs" placeholder="https://...">
+          <button id="cover-editor-apply-url-btn" class="mt-2 w-full py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg text-xs font-bold">Aplicar Link</button>
+        </div>
+
+        <div class="pt-2 border-t border-gray-800">
+          <label class="block text-xs font-bold text-gray-300 mb-1">Regerar Capa com IA</label>
+          <textarea id="cover-editor-new-prompt-input" rows="2" class="w-full p-2 bg-gray-800 border border-gray-700 rounded-lg text-xs" placeholder="Ex: capa moderna com fundo escuro e título em dourado..."></textarea>
+          <button id="cover-editor-regenerate-btn" class="mt-2 w-full py-2 bg-gradient-to-r from-blue-600 to-purple-600 hover:opacity-90 text-white rounded-lg text-xs font-bold">Regerar com MV.ai</button>
+        </div>
+
+        <div class="pt-2 border-t border-gray-800">
+          <input type="file" id="cover-editor-file-input" accept="image/*" class="hidden">
+          <button id="cover-editor-upload-btn" class="w-full py-2 bg-gray-800 hover:bg-gray-700 text-purple-300 rounded-lg text-xs font-bold border border-gray-700">
+            <i class="fas fa-upload mr-1"></i> Carregar do Computador
+          </button>
+        </div>
+      </div>
+
+      <div class="pt-2 flex justify-end">
+        <button id="cover-editor-cancel-btn" class="px-4 py-2 bg-gray-800 hover:bg-gray-700 text-white rounded-lg text-xs">Fechar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Embed Scripts / Pixels Modal -->
+  <div id="embed-scripts-modal" class="fixed inset-0 bg-black/80 z-50 flex justify-center items-center hidden backdrop-blur-sm">
+    <div class="glass-panel p-6 rounded-2xl border border-blue-500/50 w-11/12 max-w-xl space-y-4">
+      <h3 class="text-xl font-bold text-blue-400">Scripts &amp; Pixels de Rastreamento</h3>
+      <p class="text-xs text-gray-400">Insira aqui códigos do Meta Pixel, Google Analytics ou tags personalizadas. Eles serão incluídos no cabeçalho <code>&lt;head&gt;</code> da sua página.</p>
+      <textarea id="script-code-input" rows="8" class="w-full p-3 bg-gray-950 font-mono text-xs text-blue-300 border border-gray-700 rounded-xl focus:outline-none focus:border-blue-500" placeholder="<script> /* seu pixel aqui */ </script>"></textarea>
+      <div class="flex justify-end gap-2">
+        <button id="cancel-embed-scripts-button" class="px-4 py-2 bg-gray-800 hover:bg-gray-700 text-white rounded-lg text-xs">Cancelar</button>
+        <button id="apply-embed-scripts-button" class="px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-bold">Salvar Scripts</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Projects Modal (Meus Sites / Meus Ebooks) -->
+  <div id="projects-modal" class="fixed inset-0 bg-black/80 z-50 flex justify-center items-center hidden backdrop-blur-sm">
+    <div class="glass-panel p-6 rounded-2xl border border-blue-500/50 w-11/12 max-w-2xl max-h-[85vh] flex flex-col space-y-4">
+      <div class="flex justify-between items-center border-b border-gray-800 pb-3">
+        <h2 class="text-xl font-bold text-blue-400">Meus Sites Salvos</h2>
+        <button id="close-projects-modal-button" class="text-gray-400 hover:text-white text-lg"><i class="fas fa-times"></i></button>
+      </div>
+      <div id="projects-list" class="flex-1 overflow-y-auto custom-scrollbar space-y-3"></div>
+    </div>
+  </div>
+
+  <!-- Manage API Keys Modal -->
+  <div id="manage-api-modal" class="fixed inset-0 bg-black/80 z-50 flex justify-center items-center hidden backdrop-blur-sm">
+    <div id="manage-api-modal-content" class="glass-panel p-7 rounded-2xl border border-purple-500/50 w-11/12 max-w-lg space-y-5 transform transition-all duration-300 scale-95 opacity-0">
+      <div class="flex justify-between items-center border-b border-gray-800 pb-3">
+        <h2 class="text-xl font-bold text-purple-400 flex items-center gap-2">
+          <i class="fas fa-key"></i> Gerenciar Chaves de API
+        </h2>
+        <button id="close-manage-api-modal" class="text-gray-400 hover:text-white text-lg"><i class="fas fa-times"></i></button>
+      </div>
+
+      <div class="p-3 bg-purple-950/40 rounded-xl border border-purple-500/30 text-xs text-purple-200">
+        <i class="fas fa-bolt text-yellow-400 mr-1"></i> O <strong>MV.ai</strong> é 100% gratuito e já funciona sem chaves. Para velocidade máxima dedicada, adicione sua chave Gemini gratuita do Google abaixo:
+      </div>
+
+      <div class="space-y-4">
+        <div>
+          <label for="user-gemini-key" class="block text-xs font-bold text-gray-300 mb-1">Google Gemini API Key</label>
+          <button id="tutorial-gemini-btn" type="button" class="text-blue-400 hover:text-blue-300 text-xs font-semibold mb-2 flex items-center gap-1">
+            <i class="fas fa-question-circle"></i> Como pegar sua chave Gemini grátis em 30 segundos
+          </button>
+          <div class="flex gap-2">
+            <input type="text" id="user-gemini-key" class="flex-1 p-2.5 bg-gray-800 border border-gray-700 rounded-xl text-white text-xs focus:outline-none focus:border-purple-500" placeholder="Cole sua chave AIzaSy...">
+            <button id="gemini-rotation-btn" class="px-3 py-2 bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold rounded-xl whitespace-nowrap">+ Mais chaves</button>
+          </div>
+        </div>
+
+        <div>
+          <label for="user-pexels-key" class="block text-xs font-bold text-gray-300 mb-1">Pexels API Key (Opcional para fotos)</label>
+          <div class="flex gap-2">
+            <input type="text" id="user-pexels-key" class="flex-1 p-2.5 bg-gray-800 border border-gray-700 rounded-xl text-white text-xs focus:outline-none focus:border-purple-500" placeholder="Chave do Pexels...">
+            <button id="pexels-rotation-btn" class="px-3 py-2 bg-gray-700 hover:bg-gray-600 text-white text-xs font-bold rounded-xl whitespace-nowrap">+ Mais</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex justify-end gap-2 pt-2 border-t border-gray-800">
+        <button id="cancel-manage-api" class="px-4 py-2 bg-gray-800 hover:bg-gray-700 text-white rounded-xl text-xs font-semibold">Cancelar</button>
+        <button id="save-manage-api" class="px-5 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-xl text-xs font-bold">Salvar Chaves</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Key Rotation Submodal -->
+  <div id="key-rotation-modal" class="fixed inset-0 bg-black/75 z-[600] flex justify-center items-center hidden backdrop-blur-md">
+    <div class="glass-panel p-6 rounded-2xl border border-purple-500/50 w-80 space-y-4">
+      <div class="flex justify-between items-center">
+        <h3 id="rotation-modal-provider-label" class="font-bold text-purple-300 text-sm">Rotação de Chaves</h3>
+        <button id="rotation-modal-close" class="text-gray-400 hover:text-white">✕</button>
+      </div>
+      <div id="rotation-modal-list" class="max-h-44 overflow-y-auto custom-scrollbar"></div>
+      <div class="flex gap-2">
+        <input id="rotation-modal-input" type="text" placeholder="Cole nova chave..." class="flex-1 p-2 bg-gray-800 border border-gray-700 rounded-lg text-xs">
+        <button id="rotation-modal-add-btn" class="px-3 py-2 bg-purple-600 hover:bg-purple-500 text-white rounded-lg text-xs font-bold">Adicionar</button>
+      </div>
+      <button id="rotation-modal-test-btn" class="w-full py-2 bg-gray-800 hover:bg-gray-700 text-blue-400 rounded-lg text-xs font-bold border border-gray-700">
+        🔍 Testar Chave
+      </button>
+    </div>
+  </div>
+
+  <!-- Tutorial Modal -->
+  <div id="tutorial-modal" class="fixed inset-0 bg-black/85 z-[700] flex justify-center items-center hidden backdrop-blur-md">
+    <div class="glass-panel p-7 rounded-2xl border border-blue-500/50 w-11/12 max-w-2xl space-y-4 max-h-[90vh] overflow-y-auto custom-scrollbar">
+      <div class="flex justify-between items-center border-b border-gray-800 pb-3">
+        <h2 id="tutorial-title" class="text-xl font-bold text-blue-400">Como obter sua chave Gemini Grátis</h2>
+        <button id="close-tutorial-modal" class="text-gray-400 hover:text-white text-lg"><i class="fas fa-times"></i></button>
+      </div>
+      <div id="tutorial-body"></div>
+      <div class="flex justify-end pt-3">
+        <button id="close-tutorial-btn-footer" class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold">Entendido!</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- PDF Progress Overlay -->
+  <div id="pdf-progress-overlay" class="fixed inset-0 bg-black/90 z-[800] flex flex-col justify-center items-center text-white hidden backdrop-blur-lg">
+    <div class="glass-panel p-8 rounded-3xl border border-emerald-500/50 text-center max-w-md w-11/12 space-y-4">
+      <i class="fas fa-file-pdf text-5xl text-emerald-400 animate-bounce"></i>
+      <h3 id="pdf-progress-text" class="text-xl font-bold">Gerando PDF em Alta Resolução...</h3>
+      <div class="w-full bg-gray-800 rounded-full h-3 border border-gray-700">
+        <div id="pdf-progress-bar" class="bg-gradient-to-r from-emerald-500 to-teal-400 h-3 rounded-full transition-all duration-300" style="width: 0%"></div>
+      </div>
+      <p class="text-xs text-gray-400">Renderizando páginas com fontes e imagens em alta definição...</p>
+    </div>
+  </div>
+
+  <!-- Application Scripts -->
+  <script src="js/background-3d.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/chat.js"></script>
+  <script src="js/developer.js"></script>
+  <script src="js/cloner.js"></script>
+  <script src="js/ebook.js"></script>
+  <script src="js/viral-trends.js"></script>
+  <script src="js/ad-creative.js"></script>
+  <script src="js/api-manager.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
