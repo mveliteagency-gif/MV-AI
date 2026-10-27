@@ -5,6 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>MV.ai — Crie Sites, E-books e Anúncios com Inteligência Artificial</title>
   <meta name="description" content="MV.ai é a plataforma completa e 100% gratuita para criar landing pages, sites, e-books e criativos em segundos com Inteligência Artificial.">
+  <meta name="theme-color" content="#0a0c16">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="MV.ai">
+  <meta name="application-name" content="MV.ai">
+  <meta name="mobile-web-app-capable" content="yes">
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="assets/icon-192.png">
   <link rel="icon" type="image/svg+xml" href="assets/logo.svg">
 
   <!-- Tailwind CSS CDN -->
@@ -34,6 +42,24 @@
 <body class="text-white flex overflow-hidden">
   <!-- 3D Animated Background -->
   <div id="animated-bg"></div>
+
+  <!-- PWA Install Banner -->
+  <div id="pwa-install-banner" class="hidden">
+    <div class="flex items-center gap-3">
+      <img src="assets/icon-192.png" alt="MV.ai App" class="w-10 h-10 rounded-xl shadow-md border border-cyan-400/40 object-cover shrink-0">
+      <div class="overflow-hidden">
+        <div class="text-xs font-bold text-white flex items-center gap-1.5 flex-wrap">
+          <span>Instalar MV.ai App</span>
+          <span class="text-[9px] px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-400 font-extrabold uppercase">Grátis</span>
+        </div>
+        <p class="text-[11px] text-gray-300 truncate">Acesse direto da tela inicial em tela cheia</p>
+      </div>
+    </div>
+    <div class="flex items-center gap-2 shrink-0">
+      <button id="pwa-dismiss-btn" class="px-2.5 py-1.5 text-xs text-gray-400 hover:text-white rounded-lg transition">Depois</button>
+      <button id="pwa-install-btn" class="px-3.5 py-1.5 bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 text-white text-xs font-bold rounded-xl shadow-lg transition">Instalar</button>
+    </div>
+  </div>
 
   <!-- Centered Processing Overlay -->
   <div id="generating-overlay" class="fixed inset-0 bg-black/75 backdrop-blur-xl z-[500] flex flex-col justify-center items-center hidden opacity-0 transition-all duration-300">
@@ -108,6 +134,70 @@
       </button>
       <div class="text-[10px] text-gray-400 text-center font-medium pt-2">
         MV.ai Pro v2.0 • Sem mensalidades
+      </div>
+    </div>
+  </aside>
+
+  <!-- Mobile Menu Drawer Overlay -->
+  <div id="mobile-menu-overlay" class="hidden"></div>
+
+  <!-- Mobile Menu Drawer -->
+  <aside id="mobile-nav-menu">
+    <div class="flex justify-between items-center pb-4 mb-3 border-b border-gray-800">
+      <div class="flex items-center gap-2">
+        <img src="assets/logo.svg" alt="MV.ai" class="h-8 w-auto">
+      </div>
+      <button id="close-mobile-menu-button" class="p-2 rounded-lg text-gray-400 hover:text-white text-lg">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+
+    <!-- VIP Status Card -->
+    <div class="mb-5 p-3 rounded-xl bg-gray-900/90 border border-gray-800 text-center">
+      <span class="font-bold text-blue-300 text-sm block mb-1">Membro VIP MV.ai</span>
+      <span class="badge-vip text-xs">
+        <i class="fas fa-infinity mr-1"></i> Créditos Ilimitados
+      </span>
+      <div class="mt-2 text-[10px] text-emerald-400 font-semibold uppercase">
+        <i class="fas fa-check-circle mr-1"></i> 100% Gratuito sem mensalidade
+      </div>
+    </div>
+
+    <!-- Navigation List -->
+    <nav class="space-y-2 flex-1">
+      <button id="dev-mode-button-drawer" class="flex items-center w-full px-4 py-3 rounded-xl text-white font-semibold transition text-xs bg-gray-800 hover:bg-blue-600 shadow" onclick="switchView('developer-view', 'dev-mode-button-sidebar')">
+        <i class="fas fa-globe mr-3 text-cyan-400 text-base"></i> Gerador de Sites
+      </button>
+      <button id="infoproduct-mode-button-drawer" class="flex items-center w-full px-4 py-3 rounded-xl text-white font-semibold transition text-xs bg-gray-800 hover:bg-blue-600 shadow" onclick="switchView('infoproduct-view', 'infoproduct-mode-button-sidebar')">
+        <i class="fas fa-book mr-3 text-purple-400 text-base"></i> Gerador de E-book
+      </button>
+      <button id="zayron-cloner-mode-button-drawer" class="flex items-center w-full px-4 py-3 rounded-xl text-white font-semibold transition text-xs bg-gray-800 hover:bg-blue-600 shadow" onclick="switchView('zayron-cloner-view', 'zayron-cloner-mode-button-sidebar')">
+        <i class="fas fa-clone mr-3 text-amber-400 text-base"></i> Clonador de Sites
+      </button>
+      <button id="chat-mode-button-drawer" class="flex items-center w-full px-4 py-3 rounded-xl text-white font-semibold transition text-xs bg-gray-800 hover:bg-blue-600 shadow" onclick="switchView('chat-view', 'chat-mode-button-sidebar')">
+        <i class="fas fa-comments mr-3 text-blue-400 text-base"></i> Gerador de Prompts
+      </button>
+      <button id="ad-creative-mode-button-drawer" class="flex items-center w-full px-4 py-3 rounded-xl text-white font-semibold transition text-xs bg-gray-800 hover:bg-blue-600 shadow" onclick="switchView('ad-creative-view', 'ad-creative-mode-button-sidebar')">
+        <i class="fas fa-ad mr-3 text-pink-400 text-base"></i> Gerador de Criativos
+      </button>
+      <button id="viral-trends-mode-button-drawer" class="flex items-center w-full px-4 py-3 rounded-xl text-white font-semibold transition text-xs bg-gray-800 hover:bg-blue-600 shadow" onclick="switchView('viral-trends-view', 'viral-trends-mode-button-sidebar')">
+        <i class="fas fa-fire mr-3 text-orange-400 text-base"></i> Produtos Virais
+      </button>
+      <button id="academy-mode-button-drawer" class="flex items-center w-full px-4 py-3 rounded-xl text-white font-semibold transition text-xs bg-emerald-600/80 hover:bg-emerald-600 shadow" onclick="switchView('academy-view', 'academy-mode-button-sidebar')">
+        <i class="fas fa-graduation-cap mr-3 text-yellow-300 text-base"></i> MV Academy
+      </button>
+    </nav>
+
+    <!-- Drawer Footer Actions -->
+    <div class="pt-4 border-t border-gray-800 space-y-2">
+      <button id="manage-api-button-mobile" class="flex items-center justify-center w-full px-4 py-2.5 rounded-xl text-white font-semibold transition bg-purple-700/80 hover:bg-purple-600 text-xs shadow">
+        <i class="fas fa-key mr-2 text-yellow-400"></i> Gerenciar API &amp; Chaves
+      </button>
+      <button id="pwa-install-drawer-btn" class="flex items-center justify-center w-full px-4 py-2.5 rounded-xl text-white font-semibold transition bg-blue-600/80 hover:bg-blue-600 text-xs shadow">
+        <i class="fas fa-download mr-2 text-cyan-300"></i> Instalar App no Celular
+      </button>
+      <div class="text-[10px] text-gray-500 text-center pt-2">
+        MV.ai Pro v2.0 • PWA Mobile Ready
       </div>
     </div>
   </aside>
@@ -735,8 +825,31 @@
         <button id="send-button" class="p-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white rounded-xl shadow-lg transition flex items-center justify-center" title="Enviar">
           <i class="fas fa-paper-plane"></i>
         </button>
-      </div>
     </footer>
+
+    <!-- Native Mobile Bottom Navigation Bar (PWA Style) -->
+    <nav id="mobile-bottom-nav" class="sm:hidden">
+      <button class="bottom-nav-item active" id="bnav-dev" onclick="switchView('developer-view', 'dev-mode-button-sidebar')">
+        <i class="fas fa-globe"></i>
+        <span>Sites</span>
+      </button>
+      <button class="bottom-nav-item" id="bnav-ebook" onclick="switchView('infoproduct-view', 'infoproduct-mode-button-sidebar')">
+        <i class="fas fa-book"></i>
+        <span>E-book</span>
+      </button>
+      <button class="bottom-nav-item" id="bnav-chat" onclick="switchView('chat-view', 'chat-mode-button-sidebar')">
+        <i class="fas fa-comments"></i>
+        <span>Prompts</span>
+      </button>
+      <button class="bottom-nav-item" id="bnav-creative" onclick="switchView('ad-creative-view', 'ad-creative-mode-button-sidebar')">
+        <i class="fas fa-ad"></i>
+        <span>Criativos</span>
+      </button>
+      <button class="bottom-nav-item" id="bnav-menu" onclick="toggleMobileMenu()">
+        <i class="fas fa-bars"></i>
+        <span>Menu</span>
+      </button>
+    </nav>
   </div>
 
   <!-- ==========================================
@@ -957,5 +1070,66 @@
   <script src="js/ad-creative.js"></script>
   <script src="js/api-manager.js"></script>
   <script src="js/app.js"></script>
+
+  <!-- PWA Service Worker & Install Handler -->
+  <script>
+    // Register Service Worker
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('sw.js')
+          .then((reg) => {
+            console.log('[MV.ai PWA] Service Worker registrado:', reg.scope);
+          })
+          .catch((err) => {
+            console.warn('[MV.ai PWA] Falha ao registrar Service Worker:', err);
+          });
+      });
+    }
+
+    // PWA Install Prompt handling
+    let deferredInstallPrompt = null;
+    const pwaBanner = document.getElementById('pwa-install-banner');
+    const pwaInstallBtn = document.getElementById('pwa-install-btn');
+    const pwaDismissBtn = document.getElementById('pwa-dismiss-btn');
+    const pwaDrawerBtn = document.getElementById('pwa-install-drawer-btn');
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredInstallPrompt = e;
+      const dismissed = localStorage.getItem('mvai_pwa_dismissed');
+      if (!dismissed && pwaBanner) {
+        pwaBanner.classList.remove('hidden');
+      }
+    });
+
+    function triggerInstallPrompt() {
+      if (deferredInstallPrompt) {
+        deferredInstallPrompt.prompt();
+        deferredInstallPrompt.userChoice.then((choiceResult) => {
+          if (choiceResult.outcome === 'accepted') {
+            console.log('[MV.ai PWA] App instalado com sucesso');
+          }
+          deferredInstallPrompt = null;
+          if (pwaBanner) pwaBanner.classList.add('hidden');
+        });
+      } else {
+        alert('Para instalar o app MV.ai no celular:\n\n• No Android (Chrome): Toque nos 3 pontinhos (⋮) e selecione "Instalar aplicativo" ou "Adicionar à tela inicial".\n\n• No iOS (Safari): Toque no botão de Compartilhar (ícone do quadrado com seta para cima) e escolha "Adicionar à Tela de Início".');
+      }
+    }
+
+    if (pwaInstallBtn) pwaInstallBtn.addEventListener('click', triggerInstallPrompt);
+    if (pwaDrawerBtn) pwaDrawerBtn.addEventListener('click', triggerInstallPrompt);
+    if (pwaDismissBtn) {
+      pwaDismissBtn.addEventListener('click', () => {
+        if (pwaBanner) pwaBanner.classList.add('hidden');
+        localStorage.setItem('mvai_pwa_dismissed', 'true');
+      });
+    }
+
+    window.addEventListener('appinstalled', () => {
+      console.log('[MV.ai PWA] App MV.ai instalado no dispositivo!');
+      if (pwaBanner) pwaBanner.classList.add('hidden');
+    });
+  </script>
 </body>
 </html>

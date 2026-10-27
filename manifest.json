@@ -1,0 +1,63 @@
+{
+  "name": "MV.ai — Crie Sites, E-books & Anúncios",
+  "short_name": "MV.ai",
+  "description": "Plataforma completa e 100% gratuita para criar landing pages, e-books em PDF e anúncios com Inteligência Artificial.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#0a0c16",
+  "theme_color": "#0a0c16",
+  "lang": "pt-BR",
+  "icons": [
+    {
+      "src": "assets/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/icon-maskable.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "assets/logo.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Gerador de Sites",
+      "short_name": "Sites",
+      "url": "./index.html#sites",
+      "icons": [{ "src": "assets/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Gerador de E-book",
+      "short_name": "E-books",
+      "url": "./index.html#ebooks",
+      "icons": [{ "src": "assets/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Gerador de Criativos",
+      "short_name": "Criativos",
+      "url": "./index.html#criativos",
+      "icons": [{ "src": "assets/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Produtos Virais",
+      "short_name": "Virais",
+      "url": "./index.html#virais",
+      "icons": [{ "src": "assets/icon-192.png", "sizes": "192x192" }]
+    }
+  ]
+}

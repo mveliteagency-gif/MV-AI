@@ -2,7 +2,7 @@
  * MV.ai — Core Application Controller & View Routing
  */
 
-let currentActiveView = 'chat-view';
+let currentActiveView = 'developer-view';
 
 function initApp() {
   const views = {
@@ -14,14 +14,14 @@ function initApp() {
     'ad-creative-mode-button-sidebar': 'ad-creative-view',
     'academy-mode-button-sidebar': 'academy-view',
 
-    // Mobile mapping
-    'chat-mode-button-mobile': 'chat-view',
-    'dev-mode-button-mobile': 'developer-view',
-    'zayron-cloner-mode-button-mobile': 'zayron-cloner-view',
-    'infoproduct-mode-button-mobile': 'infoproduct-view',
-    'viral-trends-mode-button-mobile': 'viral-trends-view',
-    'ad-creative-mode-button-mobile': 'ad-creative-view',
-    'academy-mode-button-mobile': 'academy-view'
+    // Mobile Drawer buttons
+    'dev-mode-button-drawer': 'developer-view',
+    'infoproduct-mode-button-drawer': 'infoproduct-view',
+    'zayron-cloner-mode-button-drawer': 'zayron-cloner-view',
+    'chat-mode-button-drawer': 'chat-view',
+    'ad-creative-mode-button-drawer': 'ad-creative-view',
+    'viral-trends-mode-button-drawer': 'viral-trends-view',
+    'academy-mode-button-drawer': 'academy-view'
   };
 
   Object.entries(views).forEach(([btnId, viewId]) => {
@@ -33,26 +33,20 @@ function initApp() {
     }
   });
 
-  // Mobile drawer
+  // Mobile drawer controls
   const mobileMenuBtn = document.getElementById('mobile-menu-button');
   const closeMobileMenuBtn = document.getElementById('close-mobile-menu-button');
-  const mobileNavMenu = document.getElementById('mobile-nav-menu');
   const mobileOverlay = document.getElementById('mobile-menu-overlay');
 
-  if (mobileMenuBtn && mobileNavMenu) {
-    mobileMenuBtn.addEventListener('click', () => {
-      mobileNavMenu.classList.add('open');
-      if (mobileOverlay) mobileOverlay.classList.remove('hidden');
-    });
+  if (mobileMenuBtn) {
+    mobileMenuBtn.addEventListener('click', toggleMobileMenu);
   }
-
-  const closeDrawer = () => {
-    if (mobileNavMenu) mobileNavMenu.classList.remove('open');
-    if (mobileOverlay) mobileOverlay.classList.add('hidden');
-  };
-
-  if (closeMobileMenuBtn) closeMobileMenuBtn.addEventListener('click', closeDrawer);
-  if (mobileOverlay) mobileOverlay.addEventListener('click', closeDrawer);
+  if (closeMobileMenuBtn) {
+    closeMobileMenuBtn.addEventListener('click', closeMobileMenu);
+  }
+  if (mobileOverlay) {
+    mobileOverlay.addEventListener('click', closeMobileMenu);
+  }
 
   // Global Footer Prompt input routing
   const globalPromptInput = document.getElementById('prompt-input');
@@ -70,6 +64,27 @@ function initApp() {
 
   // Define view inicial padrão
   switchView('developer-view', 'dev-mode-button-sidebar');
+}
+
+function toggleMobileMenu() {
+  const mobileNavMenu = document.getElementById('mobile-nav-menu');
+  const mobileOverlay = document.getElementById('mobile-menu-overlay');
+  if (!mobileNavMenu) return;
+
+  const isOpen = mobileNavMenu.classList.contains('open');
+  if (isOpen) {
+    closeMobileMenu();
+  } else {
+    mobileNavMenu.classList.add('open');
+    if (mobileOverlay) mobileOverlay.classList.remove('hidden');
+  }
+}
+
+function closeMobileMenu() {
+  const mobileNavMenu = document.getElementById('mobile-nav-menu');
+  const mobileOverlay = document.getElementById('mobile-menu-overlay');
+  if (mobileNavMenu) mobileNavMenu.classList.remove('open');
+  if (mobileOverlay) mobileOverlay.classList.add('hidden');
 }
 
 function switchView(viewId, activeBtnId) {
@@ -107,6 +122,45 @@ function switchView(viewId, activeBtnId) {
     activeBtn.classList.add('bg-blue-600');
   }
 
+  // Atualizar botões da barra superior mobile (mobile-tab-bar)
+  const tabMapping = {
+    'developer-view': 'Sites',
+    'infoproduct-view': 'E-book',
+    'zayron-cloner-view': 'Clonador',
+    'chat-view': 'Prompts',
+    'ad-creative-view': 'Criativos',
+    'viral-trends-view': 'Viral',
+    'academy-view': 'Academy'
+  };
+
+  document.querySelectorAll('.mobile-tab-btn').forEach(tab => {
+    const text = tab.innerText.trim();
+    if (text.includes(tabMapping[viewId])) {
+      tab.classList.add('mobile-tab-active');
+      tab.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+    } else {
+      tab.classList.remove('mobile-tab-active');
+    }
+  });
+
+  // Atualizar visual da barra de navegação inferior mobile (mobile-bottom-nav)
+  const bottomNavMap = {
+    'developer-view': 'bnav-dev',
+    'infoproduct-view': 'bnav-ebook',
+    'chat-view': 'bnav-chat',
+    'ad-creative-view': 'bnav-creative'
+  };
+
+  document.querySelectorAll('.bottom-nav-item').forEach(item => {
+    item.classList.remove('active');
+  });
+
+  const activeBNavId = bottomNavMap[viewId];
+  if (activeBNavId) {
+    const activeBNav = document.getElementById(activeBNavId);
+    if (activeBNav) activeBNav.classList.add('active');
+  }
+
   // Atualizar visibilidade do footer de prompt
   const footer = document.querySelector('footer');
   if (footer) {
@@ -124,10 +178,11 @@ function switchView(viewId, activeBtnId) {
   }
 
   // Fechar drawer no mobile se aberto
-  const mobileNavMenu = document.getElementById('mobile-nav-menu');
-  const mobileOverlay = document.getElementById('mobile-menu-overlay');
-  if (mobileNavMenu) mobileNavMenu.classList.remove('open');
-  if (mobileOverlay) mobileOverlay.classList.add('hidden');
+  closeMobileMenu();
+
+  // Scroll to top of main content on view switch
+  const mainContent = document.getElementById('main-content');
+  if (mainContent) mainContent.scrollTop = 0;
 }
 
 function handleGlobalPromptSubmit() {
@@ -143,5 +198,10 @@ function handleGlobalPromptSubmit() {
     generateSiteFromPrompt(prompt);
   }
 }
+
+// Global exposure for inline onclick handlers
+window.toggleMobileMenu = toggleMobileMenu;
+window.closeMobileMenu = closeMobileMenu;
+window.switchView = switchView;
 
 window.addEventListener('DOMContentLoaded', initApp);

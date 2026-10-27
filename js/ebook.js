@@ -46,6 +46,32 @@ function initEbook() {
   initFontScaleControls();
   initBlockToolbox();
   initCoverEditor();
+
+  // Mobile Auto-Fit Listener
+  window.addEventListener('resize', fitEbookPreview);
+  fitEbookPreview();
+}
+
+function fitEbookPreview() {
+  const area = document.getElementById('ebook-render-area');
+  const container = document.getElementById('ebook-preview-container');
+  if (!area || !container) return;
+
+  const hasLandscape = currentEbookFormat === 'landscape';
+  const pageW = hasLandscape ? 1122 : 794; // approx px for A4 landscape / portrait
+
+  const available = container.clientWidth - 24;
+  if (available > 0 && available < pageW) {
+    const scale = available / pageW;
+    area.style.transform = `scale(${scale})`;
+    area.style.transformOrigin = 'top center';
+    const pages = area.querySelectorAll('.ebook-page, .illustrative-page');
+    const totalHeight = Array.from(pages).reduce((acc, p) => acc + (p.offsetHeight || 1122) + 24, 0);
+    area.style.marginBottom = `-${totalHeight * (1 - scale)}px`;
+  } else {
+    area.style.transform = '';
+    area.style.marginBottom = '';
+  }
 }
 
 window.switchEbookMainTab = function(tab) {
@@ -261,6 +287,7 @@ function renderEbookPages(data) {
   renderArea.appendChild(conclPage);
 
   attachEbookEditHooks();
+  setTimeout(fitEbookPreview, 100);
 }
 
 function renderEbookFallback(topic, count) {
