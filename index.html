@@ -247,6 +247,22 @@
            ========================================== -->
       <div id="developer-view" class="h-full flex flex-col p-4">
         <div class="flex-1 flex flex-col bg-gray-900/80 rounded-2xl border border-gray-800 p-4 shadow-xl">
+          <!-- Inline AI Prompt Bar (Instant generation for mobile & desktop) -->
+          <div class="mb-4 p-3.5 rounded-xl bg-gradient-to-r from-blue-950/60 via-indigo-950/60 to-purple-950/60 border border-blue-500/40 shadow-lg space-y-2.5">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-bold text-blue-300 uppercase tracking-wider flex items-center gap-1.5">
+                <i class="fas fa-magic text-yellow-400"></i> Descreva o site que deseja criar
+              </span>
+              <span class="text-[10px] text-emerald-400 font-bold px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/30">100% Gratuito</span>
+            </div>
+            <div class="flex flex-col sm:flex-row gap-2">
+              <input type="text" id="dev-inline-prompt-input" placeholder="Ex: Página de vendas de curso com contador regressivo, depoimentos e botão WhatsApp..." class="flex-1 p-2.5 bg-gray-900/90 border border-gray-700 rounded-xl text-white text-xs focus:outline-none focus:border-blue-500">
+              <button id="dev-inline-generate-btn" class="px-5 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold rounded-xl text-xs transition shadow-lg flex items-center justify-center gap-2 shrink-0">
+                <i class="fas fa-sparkles"></i> Gerar Site com IA
+              </button>
+            </div>
+          </div>
+
           <!-- Controls Bar -->
           <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-3 flex-wrap">
             <div class="flex items-center gap-3">

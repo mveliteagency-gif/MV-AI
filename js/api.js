@@ -176,6 +176,8 @@ function createToastContainer() {
   return c;
 }
 
+let loadingFailsafeTimer = null;
+
 function showLoading(text = "Processando com MV.ai...") {
   const overlay = document.getElementById('generating-overlay');
   const overlayText = document.getElementById('generating-overlay-text');
@@ -186,10 +188,16 @@ function showLoading(text = "Processando com MV.ai...") {
       overlay.classList.remove('opacity-0');
       overlay.classList.add('opacity-100');
     }, 10);
+
+    clearTimeout(loadingFailsafeTimer);
+    loadingFailsafeTimer = setTimeout(() => {
+      hideLoading();
+    }, 20000);
   }
 }
 
 function hideLoading() {
+  clearTimeout(loadingFailsafeTimer);
   const overlay = document.getElementById('generating-overlay');
   if (overlay) {
     overlay.classList.remove('opacity-100');

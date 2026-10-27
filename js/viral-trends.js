@@ -78,19 +78,20 @@ Use formatação bonita com emojis, títulos em negrito e listas organizadas.`;
 
 window.sendViralToEbook = function(encodedQuery) {
   const query = decodeURIComponent(encodedQuery);
-  const ebookBtn = document.getElementById('infoproduct-mode-button-sidebar');
   const ebookInput = document.getElementById('ebook-description-input');
   if (ebookInput) ebookInput.value = `Guia completo e prático resolvendo as dores de: ${query}`;
-  if (ebookBtn) ebookBtn.click();
+  if (typeof switchView === 'function') switchView('infoproduct-view', 'infoproduct-mode-button-sidebar');
   showCustomMessage('Tema transferido para o Gerador de E-book!', 'info');
 };
 
 window.sendViralToSite = function(encodedQuery) {
   const query = decodeURIComponent(encodedQuery);
-  const siteBtn = document.getElementById('dev-mode-button-sidebar');
   const promptInput = document.getElementById('prompt-input');
-  if (promptInput) promptInput.value = `Página de vendas de alta conversão para infoproduto no nicho de: ${query}`;
-  if (siteBtn) siteBtn.click();
+  const inlineInput = document.getElementById('dev-inline-prompt-input');
+  const val = `Página de vendas de alta conversão para infoproduto no nicho de: ${query}`;
+  if (promptInput) promptInput.value = val;
+  if (inlineInput) inlineInput.value = val;
+  if (typeof switchView === 'function') switchView('developer-view', 'dev-mode-button-sidebar');
   showCustomMessage('Tema transferido para o Gerador de Sites!', 'info');
 };
 

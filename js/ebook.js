@@ -97,6 +97,16 @@ window.switchEbookMainTab = function(tab) {
   }
 };
 
+window.switchEbookTheme = function(theme) {
+  currentEbookTheme = theme;
+  const themeClasses = ['theme-classic', 'theme-modern', 'theme-royal', 'theme-nature', 'theme-minimal', 'theme-ocean'];
+  document.querySelectorAll('#ebook-render-area .ebook-page').forEach(page => {
+    themeClasses.forEach(cls => page.classList.remove(cls));
+    page.classList.add(`theme-${theme}`);
+  });
+  showCustomMessage(`Estilo "${theme}" aplicado ao e-book!`, 'info');
+};
+
 /**
  * Geração de E-book Texto
  */

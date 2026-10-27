@@ -174,7 +174,7 @@ Crie um briefing de alta conversão estruturado com:
 
     const img = new Image();
     img.src = imageUrl;
-    img.onload = () => {
+    const finalizeImage = () => {
       if (resultImg) {
         resultImg.src = imageUrl;
         resultImg.classList.remove('hidden');
@@ -182,7 +182,14 @@ Crie um briefing de alta conversão estruturado com:
       if (loadingState) loadingState.classList.add('hidden');
       if (actionsArea) actionsArea.classList.remove('hidden');
       hideLoading();
+    };
+    img.onload = () => {
+      finalizeImage();
       showCustomMessage('Criativo gerado com sucesso pelo MV.ai!', 'success');
+    };
+    img.onerror = () => {
+      finalizeImage();
+      showCustomMessage('Arte visual gerada! Exibindo imagem...', 'info');
     };
   } catch (err) {
     console.error("Ad creative error:", err);

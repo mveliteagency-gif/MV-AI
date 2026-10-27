@@ -10,15 +10,8 @@ function initChat() {
   const micBtn = document.getElementById('microphone-button');
   const listeningIndicator = document.getElementById('listening-indicator');
 
-  if (sendBtn && promptInput) {
-    sendBtn.addEventListener('click', handleSendChatMessage);
-    promptInput.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter' && !e.shiftKey) {
-        e.preventDefault();
-        handleSendChatMessage();
-      }
-    });
-  }
+  // O envio do prompt global é orquestrado centralmente por js/app.js
+  // para evitar chamadas duplicadas e conflitos entre views.
 
   // Voice speech-to-text
   if (micBtn && ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)) {
@@ -142,4 +135,5 @@ Responda sempre em português, com tom profissional, prático e motivador. Use l
   }
 }
 
+window.handleSendChatMessage = handleSendChatMessage;
 window.addEventListener('DOMContentLoaded', initChat);

@@ -48,6 +48,32 @@ function initApp() {
     mobileOverlay.addEventListener('click', closeMobileMenu);
   }
 
+  // Mobile Bottom Navigation Bar explicit bindings
+  const bottomNavButtons = {
+    'bnav-dev': 'developer-view',
+    'bnav-ebook': 'infoproduct-view',
+    'bnav-chat': 'chat-view',
+    'bnav-creative': 'ad-creative-view'
+  };
+
+  Object.entries(bottomNavButtons).forEach(([bId, vId]) => {
+    const b = document.getElementById(bId);
+    if (b) {
+      b.addEventListener('click', (e) => {
+        e.preventDefault();
+        switchView(vId, 'dev-mode-button-sidebar');
+      });
+    }
+  });
+
+  const bnavMenu = document.getElementById('bnav-menu');
+  if (bnavMenu) {
+    bnavMenu.addEventListener('click', (e) => {
+      e.preventDefault();
+      toggleMobileMenu();
+    });
+  }
+
   // Global Footer Prompt input routing
   const globalPromptInput = document.getElementById('prompt-input');
   const globalSendBtn = document.getElementById('send-button');
@@ -184,7 +210,6 @@ function switchView(viewId, activeBtnId) {
   closeMobileMenu();
 
   // Scroll to top of main content on view switch
-  const mainContent = document.getElementById('main-content');
   if (mainContent) mainContent.scrollTop = 0;
 }
 

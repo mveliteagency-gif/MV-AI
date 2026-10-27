@@ -42,6 +42,26 @@ function initDeveloper() {
   if (embedScriptsBtn) embedScriptsBtn.addEventListener('click', openEmbedScriptsModal);
   if (publishNetlifyBtn) publishNetlifyBtn.addEventListener('click', downloadSiteZip);
 
+  // Inline mobile/desktop prompt generator
+  const inlinePromptInput = document.getElementById('dev-inline-prompt-input');
+  const inlineGenerateBtn = document.getElementById('dev-inline-generate-btn');
+  if (inlineGenerateBtn && inlinePromptInput) {
+    inlineGenerateBtn.addEventListener('click', () => {
+      const p = inlinePromptInput.value.trim();
+      if (p) {
+        generateSiteFromPrompt(p);
+      } else {
+        showCustomMessage('Digite o que deseja no seu site antes de gerar.', 'warning');
+      }
+    });
+    inlinePromptInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        const p = inlinePromptInput.value.trim();
+        if (p) generateSiteFromPrompt(p);
+      }
+    });
+  }
+
   initTextToolbar();
   initElementModal();
 
@@ -629,4 +649,6 @@ function loadDefaultWelcomeSite() {
   updateSiteCode(welcomeHtml, false);
 }
 
+window.generateSiteFromPrompt = generateSiteFromPrompt;
+window.updateSiteCode = updateSiteCode;
 window.addEventListener('DOMContentLoaded', initDeveloper);
