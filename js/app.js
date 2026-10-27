@@ -163,9 +163,11 @@ function switchView(viewId, activeBtnId) {
 
   // Atualizar visibilidade do footer de prompt
   const footer = document.querySelector('footer');
+  const mainContent = document.getElementById('main-content');
   if (footer) {
     if (viewId === 'developer-view' || viewId === 'chat-view') {
       footer.classList.remove('hidden');
+      if (mainContent) mainContent.classList.add('has-footer');
       const input = document.getElementById('prompt-input');
       if (input) {
         input.placeholder = viewId === 'developer-view'
@@ -174,6 +176,7 @@ function switchView(viewId, activeBtnId) {
       }
     } else {
       footer.classList.add('hidden');
+      if (mainContent) mainContent.classList.remove('has-footer');
     }
   }
 

@@ -606,23 +606,112 @@ body {
   border: 1px solid rgba(16, 185, 129, 0.4);
 }
 
-/* Mobile Specific Optimizations */
+/* Mobile Specific Optimizations — Zero Clipping & Natural Scrolling */
 @media (max-width: 640px) {
-  body {
-    padding-bottom: calc(70px + var(--safe-bottom));
+  html, body {
+    height: 100%;
+    height: 100dvh;
+    min-height: -webkit-fill-available;
+    padding-bottom: 0 !important;
+    overflow-x: hidden !important;
   }
-  .glass-panel {
-    border-radius: 16px;
-    padding: 16px;
+
+  #main-content-wrapper {
+    height: 100% !important;
+    height: 100dvh !important;
+    max-height: 100dvh !important;
+    overflow-x: hidden !important;
   }
+
+  /* Padding at the bottom of main content so nothing is covered by the bottom nav */
   #main-content {
-    padding-bottom: calc(90px + var(--safe-bottom)) !important;
+    padding-bottom: calc(76px + var(--safe-bottom)) !important;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch !important;
   }
+
+  /* When footer prompt is visible (Developer & Chat views), add extra bottom space */
+  #main-content.has-footer {
+    padding-bottom: calc(148px + var(--safe-bottom)) !important;
+  }
+
+  /* Ensure all main views allow natural scrolling on mobile without being cut off */
+  #developer-view,
+  #infoproduct-view,
+  #zayron-cloner-view,
+  #viral-trends-view,
+  #ad-creative-view,
+  #academy-view {
+    height: auto !important;
+    min-height: 100% !important;
+    padding: 10px 8px !important;
+  }
+
+  #chat-view {
+    height: 100% !important;
+    padding: 10px 8px !important;
+  }
+
+  /* Horizontally scrollable action toolbars to prevent vertical crowding */
+  .mobile-action-toolbar {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    gap: 8px !important;
+    padding-bottom: 6px !important;
+    width: 100% !important;
+    scrollbar-width: none;
+  }
+  .mobile-action-toolbar::-webkit-scrollbar {
+    display: none;
+  }
+  .mobile-action-toolbar > * {
+    flex-shrink: 0 !important;
+    white-space: nowrap !important;
+  }
+  .mobile-action-toolbar input#project-name-input {
+    width: 130px !important;
+  }
+
+  /* Preview containers responsive sizing */
+  #preview-container,
+  #cloner-preview-container {
+    min-height: 360px !important;
+    height: 52vh !important;
+    max-height: 520px !important;
+    width: 100% !important;
+  }
+
+  #ebook-preview-container {
+    min-height: 320px !important;
+    padding: 8px !important;
+  }
+
+  /* Footer Prompt Bar */
   footer {
     bottom: calc(64px + var(--safe-bottom)) !important;
     left: 0 !important;
+    right: 0 !important;
+    padding: 8px 10px !important;
+    background: rgba(10, 12, 22, 0.96) !important;
+  }
+  footer textarea#prompt-input {
+    padding: 8px 12px !important;
+    font-size: 13px !important;
+  }
+  footer button {
     padding: 8px 12px !important;
   }
+
+  /* Glass Panels spacing */
+  .glass-panel {
+    border-radius: 16px !important;
+    padding: 14px !important;
+    max-width: 100% !important;
+  }
+
+  /* Modals on Mobile as bottom sheets */
   .modal-sheet-mobile {
     align-items: flex-end !important;
   }
@@ -631,5 +720,7 @@ body {
     border-bottom-right-radius: 0 !important;
     width: 100% !important;
     max-width: 100% !important;
+    max-height: 85dvh !important;
+    overflow-y: auto !important;
   }
 }
