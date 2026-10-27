@@ -171,7 +171,7 @@ function showCustomMessage(msg, type = 'info') {
 function createToastContainer() {
   const c = document.createElement('div');
   c.id = 'mv-toast-container';
-  c.style.cssText = 'position:fixed;bottom:24px;right:24px;z-index:99999;display:flex;flex-direction:column;gap:10px;pointer-events:none;';
+  c.style.cssText = 'position:fixed;top:20px;left:50%;transform:translateX(-50%);z-index:999999;display:flex;flex-direction:column;gap:10px;pointer-events:none;width:92%;max-width:440px;align-items:center;';
   document.body.appendChild(c);
   return c;
 }

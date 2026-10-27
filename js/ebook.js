@@ -95,6 +95,7 @@ window.switchEbookMainTab = function(tab) {
     tabIllu?.classList.add('bg-purple-600', 'text-white');
     tabIllu?.classList.remove('text-gray-400');
   }
+  setTimeout(fitEbookPreview, 60);
 };
 
 window.switchEbookTheme = function(theme) {
@@ -341,6 +342,45 @@ async function handleModifyEbookText() {
   }
 }
 
+function createDefaultIllustrativePlan(topic, style) {
+  const cleanTitle = topic.length > 40 ? topic.slice(0, 40) + '...' : topic;
+  return {
+    title: cleanTitle,
+    pages: [
+      {
+        page: 1,
+        title: "A Grande Oportunidade",
+        caption: `Descubra os fundamentos essenciais e a virada de chave para dominar ${topic} com resultados reais.`,
+        image_prompt: `epic motivational visual about ${topic}, ${style}, dynamic cinematic composition, 8k`
+      },
+      {
+        page: 2,
+        title: "O Método Revelado",
+        caption: `O passo a passo estruturado que separa amadores de profissionais no mercado de hoje.`,
+        image_prompt: `step by step modern roadmap illustration about ${topic}, ${style}, clean layout, sharp focus`
+      },
+      {
+        page: 3,
+        title: "Estratégia & Execução",
+        caption: `Como implementar cada técnica no seu dia a dia sem perder tempo nem dinheiro.`,
+        image_prompt: `expert productivity and strategy scene about ${topic}, ${style}, vibrant colors, high detail`
+      },
+      {
+        page: 4,
+        title: "Erros Fatais a Evitar",
+        caption: `Conheça as armadilhas mais comuns que impedem 90% das pessoas de alcançar o sucesso.`,
+        image_prompt: `problem solving conceptual illustration for ${topic}, ${style}, dramatic lighting, clear contrast`
+      },
+      {
+        page: 5,
+        title: "Plano de Ação Prático",
+        caption: `Seu roteiro definitivo para agir agora e colher os frutos da sua dedicação.`,
+        image_prompt: `triumphant success and achievement visual about ${topic}, ${style}, golden lighting, masterpiece`
+      }
+    ]
+  };
+}
+
 /**
  * Geração de E-book Ilustrativo
  */
@@ -351,7 +391,7 @@ async function handleGenerateEbookIllustrative() {
   const style = styleSelect ? styleSelect.value : 'Infográfico Moderno';
 
   if (!topic) {
-    showCustomMessage('Descreva o tema do e-book ilustrativo.', 'warning');
+    showCustomMessage('Descreva o tema do e-book ilustrativo antes de gerar.', 'warning');
     return;
   }
 
@@ -369,12 +409,12 @@ async function handleGenerateEbookIllustrative() {
   if (progressArea) progressArea.classList.remove('hidden');
 
   try {
-    if (progressLabel) progressLabel.textContent = 'Planejando páginas visuais...';
+    if (progressLabel) progressLabel.textContent = 'Planejando páginas visuais com IA...';
     if (progressBar) progressBar.style.width = '15%';
 
     const planPrompt = `Crie um plano de 5 páginas ilustradas de alto impacto para um e-book visual sobre: "${topic}".
 Para cada página, forneça um título curto, um texto explicativo conciso (máximo 2 frases) e um prompt visual detalhado em inglês para gerar a ilustração no estilo: "${style}".
-Responda em formato JSON:
+Responda APENAS com o objeto JSON:
 {
   "title": "Título Geral",
   "pages": [
@@ -382,44 +422,76 @@ Responda em formato JSON:
   ]
 }`;
 
-    const planText = await MV_API.generateText(planPrompt);
-    const plan = JSON.parse(planText.replace(/^```json\s*/i, '').replace(/```\s*$/i, '').trim());
+    let plan = null;
+    try {
+      const planText = await MV_API.generateText(planPrompt);
+      let cleanJson = planText.replace(/^```json\s*/i, '').replace(/^```\s*/i, '').replace(/```\s*$/i, '').trim();
+      const match = cleanJson.match(/\{[\s\S]*\}/);
+      if (match) cleanJson = match[0];
+      plan = JSON.parse(cleanJson);
+      if (!plan || !Array.isArray(plan.pages) || plan.pages.length === 0) {
+        throw new Error("Formato inválido");
+      }
+    } catch (parseErr) {
+      console.warn("[MV.ai] Usando plano ilustrativo estruturado:", parseErr);
+      plan = createDefaultIllustrativePlan(topic, style);
+    }
+
+    currentEbookData = {
+      type: 'illustrative',
+      title: plan.title || topic,
+      topic: topic,
+      style: style,
+      pages: plan.pages
+    };
 
     const renderArea = document.getElementById('ebook-render-area');
     const placeholder = document.getElementById('ebook-placeholder');
     if (placeholder) placeholder.classList.add('hidden');
-    renderArea.innerHTML = '';
+    if (renderArea) renderArea.innerHTML = '';
 
     const totalPages = plan.pages.length;
     for (let i = 0; i < totalPages; i++) {
       if (isIllustrativeStopRequested) break;
 
       const p = plan.pages[i];
-      if (progressLabel) progressLabel.textContent = `Gerando ilustração ${i + 1} de ${totalPages}...`;
+      if (progressLabel) progressLabel.textContent = `Renderizando arte ${i + 1} de ${totalPages}...`;
       if (progressBar) progressBar.style.width = `${Math.round(((i + 1) / totalPages) * 100)}%`;
 
       const imgUrl = MV_API.generateImageUrl(p.image_prompt, 1024, 1440, style);
+      p.imgUrl = imgUrl;
 
       const pageEl = document.createElement('div');
       pageEl.className = 'illustrative-page';
+      pageEl.style.backgroundColor = '#181b2e';
       pageEl.style.backgroundImage = `url('${imgUrl}')`;
       pageEl.innerHTML = `
-        <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-black/40 flex flex-col justify-between p-10 text-white">
+        <div class="absolute inset-0 bg-gradient-to-t from-black/95 via-black/35 to-black/50 flex flex-col justify-between p-8 sm:p-10 text-white">
           <div class="flex justify-between items-center">
-            <span class="px-3 py-1 bg-purple-600/60 rounded-full text-xs font-bold backdrop-blur-md">Página ${p.page}</span>
-            <span class="text-xs font-mono tracking-widest text-gray-300 uppercase">${plan.title}</span>
+            <span class="px-3.5 py-1.5 bg-purple-600/80 rounded-full text-xs font-black backdrop-blur-md shadow-lg">Página ${p.page || i + 1}</span>
+            <span class="text-xs font-mono tracking-widest text-purple-300 uppercase font-bold drop-shadow">${plan.title || topic}</span>
           </div>
           <div class="space-y-3 max-w-xl">
-            <h2 class="text-3xl font-black text-white drop-shadow-lg">${p.title}</h2>
-            <p class="text-lg text-gray-200 leading-relaxed drop-shadow">${p.caption}</p>
+            <h2 class="text-2xl sm:text-3xl font-black text-white drop-shadow-xl editable-element">${p.title || ''}</h2>
+            <p class="text-base sm:text-lg text-gray-200 leading-relaxed drop-shadow-md editable-element">${p.caption || ''}</p>
           </div>
         </div>
       `;
-      renderArea.appendChild(pageEl);
+      if (renderArea) renderArea.appendChild(pageEl);
     }
 
     document.getElementById('download-pdf-button')?.classList.remove('hidden');
     document.getElementById('save-ebook-button')?.classList.remove('hidden');
+
+    attachEbookEditHooks();
+    setTimeout(() => {
+      fitEbookPreview();
+      const previewContainer = document.getElementById('ebook-preview-container');
+      if (previewContainer && window.innerWidth < 1024) {
+        previewContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }, 150);
+
     showCustomMessage('E-book ilustrativo gerado com sucesso!', 'success');
   } catch (err) {
     console.error("Illustrative error:", err);
@@ -430,6 +502,44 @@ Responda em formato JSON:
     if (progressArea) progressArea.classList.add('hidden');
     isIllustrativeGenerating = false;
   }
+}
+
+function renderIllustrativePages(data) {
+  const renderArea = document.getElementById('ebook-render-area');
+  const placeholder = document.getElementById('ebook-placeholder');
+  if (placeholder) placeholder.classList.add('hidden');
+  if (!renderArea) return;
+  renderArea.innerHTML = '';
+
+  const pages = data.pages || [];
+  pages.forEach((p, i) => {
+    const imgUrl = p.imgUrl || MV_API.generateImageUrl(p.image_prompt, 1024, 1440, data.style || 'Infográfico Moderno');
+    p.imgUrl = imgUrl;
+
+    const pageEl = document.createElement('div');
+    pageEl.className = 'illustrative-page';
+    pageEl.style.backgroundColor = '#181b2e';
+    pageEl.style.backgroundImage = `url('${imgUrl}')`;
+    pageEl.innerHTML = `
+      <div class="absolute inset-0 bg-gradient-to-t from-black/95 via-black/35 to-black/50 flex flex-col justify-between p-8 sm:p-10 text-white">
+        <div class="flex justify-between items-center">
+          <span class="px-3.5 py-1.5 bg-purple-600/80 rounded-full text-xs font-black backdrop-blur-md shadow-lg">Página ${p.page || i + 1}</span>
+          <span class="text-xs font-mono tracking-widest text-purple-300 uppercase font-bold drop-shadow">${data.title || ''}</span>
+        </div>
+        <div class="space-y-3 max-w-xl">
+          <h2 class="text-2xl sm:text-3xl font-black text-white drop-shadow-xl editable-element">${p.title || ''}</h2>
+          <p class="text-base sm:text-lg text-gray-200 leading-relaxed drop-shadow-md editable-element">${p.caption || ''}</p>
+        </div>
+      </div>
+    `;
+    renderArea.appendChild(pageEl);
+  });
+
+  document.getElementById('download-pdf-button')?.classList.remove('hidden');
+  document.getElementById('save-ebook-button')?.classList.remove('hidden');
+
+  attachEbookEditHooks();
+  setTimeout(fitEbookPreview, 100);
 }
 
 /**
@@ -445,10 +555,18 @@ async function handleDownloadPdf() {
   const overlay = document.getElementById('pdf-progress-overlay');
   const bar = document.getElementById('pdf-progress-bar');
   const text = document.getElementById('pdf-progress-text');
+  const area = document.getElementById('ebook-render-area');
+  const prevTransform = area ? area.style.transform : '';
+  const prevMargin = area ? area.style.marginBottom : '';
 
   if (overlay) overlay.classList.remove('hidden');
 
   try {
+    if (area) {
+      area.style.transform = 'none';
+      area.style.marginBottom = '0';
+    }
+
     const { jsPDF } = window.jspdf;
     const isLandscape = currentEbookFormat === 'landscape';
     const pdf = new jsPDF({
@@ -485,6 +603,10 @@ async function handleDownloadPdf() {
     console.error("PDF export error:", err);
     showCustomMessage('Falha ao exportar PDF: ' + err.message, 'error');
   } finally {
+    if (area) {
+      area.style.transform = prevTransform;
+      area.style.marginBottom = prevMargin;
+    }
     if (overlay) overlay.classList.add('hidden');
   }
 }
@@ -541,9 +663,16 @@ window.loadSavedEbook = function(idx) {
   const saved = JSON.parse(localStorage.getItem('mv_saved_ebooks') || '[]');
   if (saved[idx]) {
     currentEbookData = saved[idx].data;
-    renderEbookPages(saved[idx].data);
+    if (currentEbookData.type === 'illustrative') {
+      window.switchEbookMainTab('illustrative');
+      renderIllustrativePages(currentEbookData);
+    } else {
+      window.switchEbookMainTab('text');
+      renderEbookPages(currentEbookData);
+    }
     document.getElementById('projects-modal')?.classList.add('hidden');
     document.getElementById('download-pdf-button')?.classList.remove('hidden');
+    document.getElementById('save-ebook-button')?.classList.remove('hidden');
     showCustomMessage(`E-book "${saved[idx].title}" carregado!`, 'success');
   }
 };
@@ -772,5 +901,13 @@ function updateEbookPageFormat() {
     else p.classList.remove('landscape');
   });
 }
+
+window.handleGenerateEbookIllustrative = handleGenerateEbookIllustrative;
+window.handleGenerateEbookText = handleGenerateEbookText;
+window.handleDownloadPdf = handleDownloadPdf;
+window.handleSaveEbook = handleSaveEbook;
+window.fitEbookPreview = fitEbookPreview;
+window.renderIllustrativePages = renderIllustrativePages;
+window.openMyEbooksModal = openMyEbooksModal;
 
 window.addEventListener('DOMContentLoaded', initEbook);

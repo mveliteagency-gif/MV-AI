@@ -423,11 +423,11 @@
                 </select>
               </div>
 
-              <button id="generate-illustrative-ebook-button" class="w-full py-3.5 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white font-extrabold rounded-xl shadow-lg transition flex items-center justify-center gap-2">
+              <button id="generate-illustrative-ebook-button" onclick="handleGenerateEbookIllustrative()" class="w-full py-3.5 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white font-extrabold rounded-xl shadow-lg transition flex items-center justify-center gap-2">
                 <i class="fas fa-palette"></i> Gerar E-book Ilustrativo
               </button>
 
-              <button id="illustrative-stop-button" class="w-full py-2.5 bg-red-600 hover:bg-red-700 text-white font-bold rounded-xl text-xs transition hidden">
+              <button id="illustrative-stop-button" onclick="if (typeof isIllustrativeStopRequested !== 'undefined') isIllustrativeStopRequested = true;" class="w-full py-2.5 bg-red-600 hover:bg-red-700 text-white font-bold rounded-xl text-xs transition hidden">
                 <i class="fas fa-stop mr-1"></i> Parar Geração
               </button>
 
@@ -444,10 +444,10 @@
 
             <!-- Ebook Action Buttons -->
             <div class="pt-4 border-t border-gray-800 space-y-2">
-              <button id="download-pdf-button" class="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold rounded-xl shadow-lg transition flex items-center justify-center gap-2 hidden">
+              <button id="download-pdf-button" onclick="handleDownloadPdf()" class="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold rounded-xl shadow-lg transition flex items-center justify-center gap-2 hidden">
                 <i class="fas fa-file-pdf text-lg"></i> Baixar E-book em PDF
               </button>
-              <button id="save-ebook-button" class="w-full py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl text-xs transition flex items-center justify-center gap-1.5 hidden">
+              <button id="save-ebook-button" onclick="handleSaveEbook()" class="w-full py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl text-xs transition flex items-center justify-center gap-1.5 hidden">
                 <i class="fas fa-save"></i> Salvar em Meus E-books
               </button>
             </div>
@@ -795,31 +795,136 @@
            7. MV ACADEMY VIEW
            ========================================== -->
       <div id="academy-view" class="h-full flex flex-col p-4 hidden">
-        <div class="max-w-5xl mx-auto w-full space-y-6 pb-8">
-          <div class="text-center pt-2">
-            <h2 class="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-teal-300 to-cyan-400">
-              <i class="fas fa-graduation-cap mr-2"></i> MV Academy — Central de Aprendizado
+        <div class="max-w-6xl mx-auto w-full space-y-6 pb-12">
+          <div class="text-center pt-2 max-w-2xl mx-auto">
+            <span class="px-3.5 py-1 bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 rounded-full text-xs font-black uppercase tracking-wider inline-flex items-center gap-1.5 mb-2">
+              <i class="fas fa-graduation-cap"></i> MV Academy Masterclasses
+            </span>
+            <h2 class="text-2xl sm:text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-teal-300 to-cyan-400">
+              Central de Aprendizado Prático
             </h2>
-            <p class="text-gray-400 text-sm mt-1">Tutoriais práticos para monetizar com sites, e-books e anúncios usando MV.ai</p>
+            <p class="text-gray-400 text-xs sm:text-sm mt-1">Aulas práticas passo a passo para faturar com e-books, landing pages, anúncios e produtos virais usando o MV.ai 100% grátis.</p>
           </div>
 
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div class="glass-panel p-5 rounded-2xl border border-emerald-500/30 space-y-3">
-              <div class="w-10 h-10 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-xl font-bold">1</div>
-              <h3 class="text-lg font-bold text-white">Como Vender E-books em 24h</h3>
-              <p class="text-xs text-gray-400 leading-relaxed">Aprenda a escolher um tema de alta demanda na aba Produtos Virais, gerar seu e-book completo com capa 3D e cadastrar na Kiwify ou Hotmart para vender no automático.</p>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+            <!-- Masterclass 1: E-books -->
+            <div class="glass-panel p-5 sm:p-6 rounded-2xl border border-emerald-500/30 flex flex-col justify-between space-y-4 hover:border-emerald-500/60 transition shadow-lg">
+              <div class="space-y-3">
+                <div class="flex items-center justify-between">
+                  <span class="px-2.5 py-1 rounded-lg bg-emerald-500/20 text-emerald-400 text-[11px] font-black uppercase tracking-wide">Módulo 1 • E-books</span>
+                  <span class="text-xs text-gray-400"><i class="fas fa-clock mr-1"></i> 8 min</span>
+                </div>
+                <h3 class="text-lg sm:text-xl font-black text-white flex items-center gap-2">
+                  <span class="w-7 h-7 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-sm font-black">1</span>
+                  Como Criar e Vender E-books em 24h
+                </h3>
+                <p class="text-xs text-gray-300 leading-relaxed">
+                  Roteiro completo para escolher nichos lucrativos, gerar e-books de texto denso ou ilustrados em 3D, exportar em PDF profissional e cadastrar na Kiwify ou Hotmart para vender sem estoque.
+                </p>
+                <div class="flex flex-wrap gap-1.5 pt-1">
+                  <span class="text-[10px] px-2 py-0.5 rounded bg-gray-800 text-gray-300 border border-gray-700">Kiwify / Hotmart</span>
+                  <span class="text-[10px] px-2 py-0.5 rounded bg-gray-800 text-gray-300 border border-gray-700">PDF Alta Resolução</span>
+                  <span class="text-[10px] px-2 py-0.5 rounded bg-gray-800 text-gray-300 border border-gray-700">Capa 3D</span>
+                </div>
+              </div>
+              <div class="pt-3 border-t border-gray-800/80 flex flex-col sm:flex-row gap-2">
+                <button onclick="openAcademyLesson('lesson-ebook')" class="flex-1 py-2.5 px-3 bg-gray-800 hover:bg-gray-700 text-emerald-300 font-bold rounded-xl text-xs transition flex items-center justify-center gap-1.5 border border-emerald-500/30">
+                  <i class="fas fa-book-open"></i> Ver Aula Completa
+                </button>
+                <button onclick="switchView('infoproduct-view', 'dev-mode-button-sidebar')" class="flex-1 py-2.5 px-3 bg-emerald-600 hover:bg-emerald-500 text-white font-black rounded-xl text-xs transition flex items-center justify-center gap-1.5 shadow">
+                  <i class="fas fa-magic"></i> Criar E-book Agora 🚀
+                </button>
+              </div>
             </div>
 
-            <div class="glass-panel p-5 rounded-2xl border border-blue-500/30 space-y-3">
-              <div class="w-10 h-10 rounded-xl bg-blue-500/20 text-blue-400 flex items-center justify-center text-xl font-bold">2</div>
-              <h3 class="text-lg font-bold text-white">Criando Landing Pages Lucrativas</h3>
-              <p class="text-xs text-gray-400 leading-relaxed">Como utilizar o Gerador de Sites do MV.ai para produzir páginas de vendas com design moderno, contador de escassez e publicar gratuitamente na Netlify.</p>
+            <!-- Masterclass 2: Landing Pages -->
+            <div class="glass-panel p-5 sm:p-6 rounded-2xl border border-blue-500/30 flex flex-col justify-between space-y-4 hover:border-blue-500/60 transition shadow-lg">
+              <div class="space-y-3">
+                <div class="flex items-center justify-between">
+                  <span class="px-2.5 py-1 rounded-lg bg-blue-500/20 text-blue-400 text-[11px] font-black uppercase tracking-wide">Módulo 2 • Sites</span>
+                  <span class="text-xs text-gray-400"><i class="fas fa-clock mr-1"></i> 10 min</span>
+                </div>
+                <h3 class="text-lg sm:text-xl font-black text-white flex items-center gap-2">
+                  <span class="w-7 h-7 rounded-lg bg-blue-500/20 text-blue-400 flex items-center justify-center text-sm font-black">2</span>
+                  Landing Pages de Alta Conversão
+                </h3>
+                <p class="text-xs text-gray-300 leading-relaxed">
+                  Aprenda a criar páginas de vendas irresistíveis com copywriting persuasivo (AIDA), cronômetro regressivo de escassez, prova social e publicação gratuita na Netlify com seu domínio.
+                </p>
+                <div class="flex flex-wrap gap-1.5 pt-1">
+                  <span class="text-[10px] px-2 py-0.5 rounded bg-gray-800 text-gray-300 border border-gray-700">Estrutura AIDA</span>
+                  <span class="text-[10px] px-2 py-0.5 rounded bg-gray-800 text-gray-300 border border-gray-700">Checkout Integrado</span>
+                  <span class="text-[10px] px-2 py-0.5 rounded bg-gray-800 text-gray-300 border border-gray-700">Hospedagem Netlify</span>
+                </div>
+              </div>
+              <div class="pt-3 border-t border-gray-800/80 flex flex-col sm:flex-row gap-2">
+                <button onclick="openAcademyLesson('lesson-landing-page')" class="flex-1 py-2.5 px-3 bg-gray-800 hover:bg-gray-700 text-blue-300 font-bold rounded-xl text-xs transition flex items-center justify-center gap-1.5 border border-blue-500/30">
+                  <i class="fas fa-book-open"></i> Ver Aula Completa
+                </button>
+                <button onclick="switchView('developer-view', 'dev-mode-button-sidebar')" class="flex-1 py-2.5 px-3 bg-blue-600 hover:bg-blue-500 text-white font-black rounded-xl text-xs transition flex items-center justify-center gap-1.5 shadow">
+                  <i class="fas fa-globe"></i> Criar Site Agora 🚀
+                </button>
+              </div>
             </div>
 
-            <div class="glass-panel p-5 rounded-2xl border border-purple-500/30 space-y-3">
-              <div class="w-10 h-10 rounded-xl bg-purple-500/20 text-purple-400 flex items-center justify-center text-xl font-bold">3</div>
-              <h3 class="text-lg font-bold text-white">Anúncios de Alta Conversão</h3>
-              <p class="text-xs text-gray-400 leading-relaxed">Descubra como criar criativos nos formatos Feed e Stories que capturam a atenção nos primeiros 3 segundos e geram cliques baratos no Instagram Ads.</p>
+            <!-- Masterclass 3: Anúncios Criativos -->
+            <div class="glass-panel p-5 sm:p-6 rounded-2xl border border-purple-500/30 flex flex-col justify-between space-y-4 hover:border-purple-500/60 transition shadow-lg">
+              <div class="space-y-3">
+                <div class="flex items-center justify-between">
+                  <span class="px-2.5 py-1 rounded-lg bg-purple-500/20 text-purple-400 text-[11px] font-black uppercase tracking-wide">Módulo 3 • Tráfego</span>
+                  <span class="text-xs text-gray-400"><i class="fas fa-clock mr-1"></i> 7 min</span>
+                </div>
+                <h3 class="text-lg sm:text-xl font-black text-white flex items-center gap-2">
+                  <span class="w-7 h-7 rounded-lg bg-purple-500/20 text-purple-400 flex items-center justify-center text-sm font-black">3</span>
+                  Criativos Magnéticos para Instagram & TikTok
+                </h3>
+                <p class="text-xs text-gray-300 leading-relaxed">
+                  Como dominar a regra dos primeiros 3 segundos, produzir artes chamativas nos formatos Feed (1:1) e Stories (9:16) e pagar menos por clique em suas campanhas de anúncios pagos.
+                </p>
+                <div class="flex flex-wrap gap-1.5 pt-1">
+                  <span class="text-[10px] px-2 py-0.5 rounded bg-gray-800 text-gray-300 border border-gray-700">Feed &amp; Stories</span>
+                  <span class="text-[10px] px-2 py-0.5 rounded bg-gray-800 text-gray-300 border border-gray-700">Meta Ads</span>
+                  <span class="text-[10px] px-2 py-0.5 rounded bg-gray-800 text-gray-300 border border-gray-700">TikTok Ads</span>
+                </div>
+              </div>
+              <div class="pt-3 border-t border-gray-800/80 flex flex-col sm:flex-row gap-2">
+                <button onclick="openAcademyLesson('lesson-creatives')" class="flex-1 py-2.5 px-3 bg-gray-800 hover:bg-gray-700 text-purple-300 font-bold rounded-xl text-xs transition flex items-center justify-center gap-1.5 border border-purple-500/30">
+                  <i class="fas fa-book-open"></i> Ver Aula Completa
+                </button>
+                <button onclick="switchView('ad-creative-view', 'dev-mode-button-sidebar')" class="flex-1 py-2.5 px-3 bg-purple-600 hover:bg-purple-500 text-white font-black rounded-xl text-xs transition flex items-center justify-center gap-1.5 shadow">
+                  <i class="fas fa-ad"></i> Gerar Criativo Agora 🚀
+                </button>
+              </div>
+            </div>
+
+            <!-- Masterclass 4: Produtos Virais -->
+            <div class="glass-panel p-5 sm:p-6 rounded-2xl border border-orange-500/30 flex flex-col justify-between space-y-4 hover:border-orange-500/60 transition shadow-lg">
+              <div class="space-y-3">
+                <div class="flex items-center justify-between">
+                  <span class="px-2.5 py-1 rounded-lg bg-orange-500/20 text-orange-400 text-[11px] font-black uppercase tracking-wide">Módulo 4 • Mineração</span>
+                  <span class="text-xs text-gray-400"><i class="fas fa-clock mr-1"></i> 6 min</span>
+                </div>
+                <h3 class="text-lg sm:text-xl font-black text-white flex items-center gap-2">
+                  <span class="w-7 h-7 rounded-lg bg-orange-500/20 text-orange-400 flex items-center justify-center text-sm font-black">4</span>
+                  Mineração de Produtos Virais & Tendências
+                </h3>
+                <p class="text-xs text-gray-300 leading-relaxed">
+                  Descubra quais ofertas e infoprodutos estão viralizando no momento antes da concorrência. Crie e lance produtos validados com alta procura em menos de 48 horas.
+                </p>
+                <div class="flex flex-wrap gap-1.5 pt-1">
+                  <span class="text-[10px] px-2 py-0.5 rounded bg-gray-800 text-gray-300 border border-gray-700">Tendências TikTok</span>
+                  <span class="text-[10px] px-2 py-0.5 rounded bg-gray-800 text-gray-300 border border-gray-700">Google Trends</span>
+                  <span class="text-[10px] px-2 py-0.5 rounded bg-gray-800 text-gray-300 border border-gray-700">Validação Express</span>
+                </div>
+              </div>
+              <div class="pt-3 border-t border-gray-800/80 flex flex-col sm:flex-row gap-2">
+                <button onclick="openAcademyLesson('lesson-viral')" class="flex-1 py-2.5 px-3 bg-gray-800 hover:bg-gray-700 text-orange-300 font-bold rounded-xl text-xs transition flex items-center justify-center gap-1.5 border border-orange-500/30">
+                  <i class="fas fa-book-open"></i> Ver Aula Completa
+                </button>
+                <button onclick="switchView('viral-trends-view', 'dev-mode-button-sidebar')" class="flex-1 py-2.5 px-3 bg-orange-600 hover:bg-orange-500 text-white font-black rounded-xl text-xs transition flex items-center justify-center gap-1.5 shadow">
+                  <i class="fas fa-fire"></i> Explorar Tendências 🚀
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -841,6 +946,7 @@
         <button id="send-button" class="p-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white rounded-xl shadow-lg transition flex items-center justify-center" title="Enviar">
           <i class="fas fa-paper-plane"></i>
         </button>
+      </div>
     </footer>
 
     <!-- Native Mobile Bottom Navigation Bar (PWA Style) -->
@@ -861,7 +967,7 @@
         <i class="fas fa-ad"></i>
         <span>Criativos</span>
       </button>
-      <button class="bottom-nav-item" id="bnav-menu" onclick="toggleMobileMenu()">
+      <button class="bottom-nav-item" id="bnav-menu" onclick="toggleMobileMenu(event)">
         <i class="fas fa-bars"></i>
         <span>Menu</span>
       </button>
@@ -1071,6 +1177,33 @@
         <div id="pdf-progress-bar" class="bg-gradient-to-r from-emerald-500 to-teal-400 h-3 rounded-full transition-all duration-300" style="width: 0%"></div>
       </div>
       <p class="text-xs text-gray-400">Renderizando páginas com fontes e imagens em alta definição...</p>
+    </div>
+  <!-- Academy Lesson Masterclass Modal -->
+  <div id="academy-lesson-modal" class="fixed inset-0 bg-black/85 z-[750] flex justify-center items-center hidden backdrop-blur-md p-3 sm:p-4">
+    <div class="glass-panel p-5 sm:p-7 rounded-3xl border border-emerald-500/40 w-full max-w-2xl space-y-4 max-h-[92vh] overflow-y-auto custom-scrollbar shadow-2xl flex flex-col justify-between">
+      <div class="space-y-2 border-b border-gray-800 pb-3">
+        <div class="flex justify-between items-center">
+          <div class="flex items-center gap-2">
+            <span id="academy-modal-category" class="px-2.5 py-1 rounded-lg bg-emerald-500/20 text-emerald-400 text-[11px] font-black uppercase">Infoprodutos</span>
+            <span id="academy-modal-readtime" class="text-xs text-gray-400 font-medium"><i class="fas fa-clock mr-1"></i> 8 min</span>
+          </div>
+          <button onclick="closeAcademyLessonModal()" class="w-8 h-8 rounded-full bg-gray-800 hover:bg-gray-700 text-gray-300 hover:text-white flex items-center justify-center transition">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <h2 id="academy-modal-title" class="text-xl sm:text-2xl font-black text-white leading-tight">Como Criar e Vender E-books em 24 Horas</h2>
+      </div>
+
+      <div id="academy-modal-body" class="flex-1 overflow-y-auto pr-1"></div>
+
+      <div class="pt-3 border-t border-gray-800 flex items-center justify-between gap-3">
+        <button onclick="closeAcademyLessonModal()" class="px-4 py-2.5 rounded-xl bg-gray-800 hover:bg-gray-700 text-gray-300 text-xs font-bold transition">
+          Fechar
+        </button>
+        <button id="academy-modal-action-btn" class="flex-1 py-3 px-5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-500 hover:from-emerald-500 hover:to-teal-400 text-white text-xs sm:text-sm font-black shadow-lg transition flex items-center justify-center gap-2">
+          Abrir Ferramenta Agora 🚀
+        </button>
+      </div>
     </div>
   </div>
 

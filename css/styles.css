@@ -203,15 +203,15 @@ body {
   position: fixed;
   top: 0;
   right: -320px;
-  width: 280px;
+  width: 290px;
   max-width: 85vw;
   height: 100%;
   height: 100dvh;
   background: #0d111e;
-  border-left: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: -10px 0 30px rgba(0, 0, 0, 0.8);
-  transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  z-index: 60;
+  border-left: 1px solid rgba(59, 130, 246, 0.25);
+  box-shadow: -10px 0 40px rgba(0, 0, 0, 0.85);
+  transition: right 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  z-index: 100;
   display: flex;
   flex-direction: column;
   padding: 20px 16px;
@@ -219,25 +219,77 @@ body {
   pointer-events: none;
 }
 #mobile-nav-menu.open {
-  right: 0;
-  pointer-events: auto;
+  right: 0 !important;
+  pointer-events: auto !important;
 }
 #mobile-menu-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.65);
+  background: rgba(0, 0, 0, 0.75);
   backdrop-filter: blur(6px);
   -webkit-backdrop-filter: blur(6px);
-  z-index: 55;
-  transition: opacity 0.3s;
+  z-index: 95;
+  transition: opacity 0.3s ease;
   pointer-events: none;
   opacity: 0;
   display: none;
 }
+#mobile-menu-overlay.active,
 #mobile-menu-overlay:not(.hidden) {
-  pointer-events: auto;
-  opacity: 1;
-  display: block;
+  pointer-events: auto !important;
+  opacity: 1 !important;
+  display: block !important;
+}
+
+/* Mobile Bottom Navigation Bar */
+#mobile-bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: calc(56px + var(--safe-bottom));
+  padding-bottom: var(--safe-bottom);
+  background: rgba(10, 14, 26, 0.96);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  z-index: 90;
+}
+.bottom-nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  color: #94a3b8;
+  font-size: 10px;
+  font-weight: 600;
+  padding: 6px 12px;
+  border-radius: 10px;
+  transition: all 0.2s ease;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
+.bottom-nav-item i {
+  font-size: 16px;
+  transition: transform 0.2s;
+}
+.bottom-nav-item:hover,
+.bottom-nav-item:focus {
+  color: #e2e8f0;
+}
+.bottom-nav-item.active {
+  color: #60a5fa;
+}
+.bottom-nav-item.active i {
+  transform: scale(1.15);
+  filter: drop-shadow(0 0 8px rgba(96, 165, 250, 0.7));
 }
 
 /* PWA Install Banner */
@@ -698,6 +750,16 @@ body {
   #ebook-preview-container {
     min-height: 320px !important;
     padding: 8px !important;
+  }
+
+  /* Illustrative Page mobile scaling */
+  .illustrative-page {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-height: 460px !important;
+    height: auto !important;
+    margin: 12px 0 !important;
+    border-radius: 14px !important;
   }
 
   /* Footer Prompt Bar */
